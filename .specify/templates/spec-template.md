@@ -1,9 +1,11 @@
 # Feature Specification: [FEATURE NAME]
 
-**Feature Branch**: `[###-feature-name]`  
-**Created**: [DATE]  
-**Status**: Draft  
+**Feature Branch**: `[###-feature-name]`
+**Created**: [DATE]
+**Status**: Draft
 **Input**: User description: "$ARGUMENTS"
+**Target Audience**: AI & Robotics students, engineers entering Physical AI, hackathon participants, startup-focused builders
+**Content Focus**: Physical AI (Embodied Intelligence), Simulation-to-Real (Sim2Real), Humanoid Robotics, ROS 2-based robotic control, Physics-based simulation, Vision-Language-Action (VLA), Conversational Robotics
 
 ## User Scenarios & Testing *(mandatory)*
 

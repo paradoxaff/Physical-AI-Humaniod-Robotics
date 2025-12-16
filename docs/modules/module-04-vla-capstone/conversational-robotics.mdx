@@ -1,0 +1,1363 @@
+---
+title: Chapter 2 - Conversational Robotics
+sidebar_label: Conversational Robotics
+---
+
+# Chapter 2: Conversational Robotics
+
+## Learning Objectives
+
+By the end of this chapter, you will be able to:
+- Design natural language interfaces for robotics applications
+- Implement speech recognition and synthesis for human-robot interaction
+- Integrate dialogue management systems with robotic action execution
+- Create context-aware conversational agents for robotics
+- Evaluate conversational robotics systems for usability and effectiveness
+- Apply conversational AI techniques to humanoid robotics applications
+
+## Physical AI Concept
+
+Conversational Robotics represents the integration of natural language processing with physical robotics, enabling robots to engage in meaningful dialogue with humans while performing physical tasks. This integration is essential for Physical AI systems that operate in human environments, where natural communication is crucial for effective collaboration. Conversational robots must understand spoken or written commands, maintain context during interactions, and execute appropriate physical actions in response to human requests.
+
+Key aspects of conversational robotics in Physical AI:
+- **Natural Language Understanding**: Processing human language to extract intent and entities
+- **Dialogue Management**: Maintaining coherent conversation flow and context
+- **Action Execution**: Translating language commands into physical robot behaviors
+- **Context Awareness**: Understanding the physical and conversational context
+- **Multimodal Interaction**: Combining speech, vision, and physical action
+
+## System Architecture
+
+### Conversational Robotics Architecture
+
+```
+Conversational Robotics Architecture:
+┌─────────────────────────────────────────────────────────────────────┐
+│                    Human Communication Layer                        │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐    │
+│  │   Speech        │  │   Text          │  │   Multimodal    │    │
+│  │   Input         │  │   Input         │  │   Communication │    │
+│  │  • Spoken       │  │  • Typed       │  │  • Gestures     │    │
+│  │    Commands     │  │    Queries      │  │  • Pointing     │    │
+│  │  • Questions    │  │  • Instructions │  │  • Demonstrations│   │
+│  │  • Conversations│  │  • Clarifications│ │  • Expressions  │    │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘    │
+│              │                    │                    │           │
+│              ▼                    ▼                    ▼           │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │              Natural Language Processing Layer              │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │  │
+│  │  │  Speech     │  │  Language   │  │  Dialogue   │        │  │
+│  │  │  Recognition │  │  Understanding│ │  Management │        │  │
+│  │  │  • ASR       │  │  • Intent   │  │  • Context  │        │  │
+│  │  │  • Noise     │  │    Extraction│  │    Tracking │        │  │
+│  │  │    Reduction  │  │  • Entity   │  │  • Turn     │        │  │
+│  │  │  • Wake      │  │    Recognition│ │    Taking   │        │  │
+│  │  │    Word      │  │  • Semantic  │  │  • State    │        │  │
+│  │  │    Detection │  │    Parsing   │  │    Management│       │  │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘        │  │
+│  └─────────────────────────────────────────────────────────────┘  │
+│                                     │                            │
+│                                     ▼                            │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │              AI Reasoning & Planning Layer                  │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │  │
+│  │  │  Intent     │  │  Task        │  │  Learning   │        │  │
+│  │  │  Resolution │  │  Planning    │  │  & Adaptation│        │  │
+│  │  │  • Command  │  │  • Goal      │  │  • Dialogue │        │  │
+│  │  │    Mapping  │  │    Decomposition││    Learning │        │  │
+│  │  │  • Ambiguity│  │  • Skill     │  │  • Personal-│        │  │
+│  │  │    Resolution│ │    Sequencing │  │    ization   │       │  │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘        │  │
+│  └─────────────────────────────────────────────────────────────┘  │
+│                                     │                            │
+│                                     ▼                            │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │              Robot Action Execution Layer                   │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │  │
+│  │  │  Navigation │  │  Manipulation│  │  Social      │        │  │
+│  │  │  • Path     │  │  • Grasping  │  │  Interaction │        │  │
+│  │  │    Planning  │  │  • Tool Use │  │  • Expressions│        │  │
+│  │  │  • Obstacle  │  │  • Force    │  │  • Emotions  │        │  │
+│  │  │    Avoidance │  │    Control  │  │  • Etiquette │        │  │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘        │  │
+│  └─────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Dialogue Management Pipeline
+
+```
+Dialogue Management Pipeline:
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   User Input    │───▶│  Language       │───▶│  Intent         │
+│   • Speech      │    │  Understanding  │    │  Resolution     │
+│   • Text        │    │  • NLU Model    │    │  • Command     │
+│   • Context     │    │  • Entity      │    │    Mapping     │
+│                 │    │    Extraction   │    │  • Clarification│
+└─────────────────┘    │  • Context     │    │    Requests    │
+         │               │    Integration │    └─────────────────┘
+         ▼               └─────────────────┘           │
+┌─────────────────┐              │                     ▼
+│   Speech        │    ┌─────────────────┐    ┌─────────────────┐
+│   Processing    │───▶│  Dialogue       │───▶│  Action         │
+│  • ASR          │    │  State          │    │  Planning       │
+│  • STT          │    │  Management     │    │  • Task        │
+│  • Noise        │    │  • Context     │    │    Decomposition│
+│    Reduction    │    │    Tracking     │    │  • Skill       │
+└─────────────────┘    │  • Turn        │    │    Sequencing   │
+         │               │    Management   │    │  • Execution   │
+         ▼               │  • Memory      │    └─────────────────┘
+┌─────────────────┐    │    Management   │           │
+│   Context       │───▶│  • Grounding    │    ┌─────────────────┐
+│   Integration   │    │    Resolution   │───▶│  Response       │
+│  • Visual       │    │                 │    │  Generation     │
+│    Context      │    └─────────────────┘    │  • NLG Model    │
+│  • Spatial      │              │            │  • Context      │
+│    Information  │              ▼            │    Integration  │
+└─────────────────┘    ┌─────────────────┐    │  • Social       │
+                       │  Task & Action  │    │    Appropriateness│
+                       │  Execution      │    └─────────────────┘
+                       │  • Robot        │           │
+                       │    Commands     │           ▼
+                       │  • Execution    │    ┌─────────────────┐
+                       │    Monitoring   │    │  Response       │
+                       │  • Feedback     │    │  Output         │
+                       │    Integration   │    │  • TTS          │
+                       └─────────────────┘    │  • Speech       │
+                                              │  • Text         │
+                                              │  • Visual       │
+                                              └─────────────────┘
+```
+
+## Tools & Software
+
+This chapter uses:
+- **SpeechRecognition** - Library for speech recognition
+- **pyttsx3** - Text-to-speech synthesis
+- **transformers** - Hugging Face models for NLU
+- **spaCy** - Natural language processing
+- **Rasa** - Dialogue management framework
+- **ROS 2** - Robot operating system integration
+- **Google Cloud Speech-to-Text** - Cloud-based ASR
+- **Amazon Polly** - Cloud-based TTS (optional)
+
+## Code / Configuration Examples
+
+### Conversational Robotics Core Node
+```python
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String, Bool
+from sensor_msgs.msg import Image
+from geometry_msgs.msg import Pose
+from cv_bridge import CvBridge
+import speech_recognition as sr
+import pyttsx3
+import threading
+import queue
+import time
+import json
+from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
+import spacy
+
+class ConversationalRobotCoreNode(Node):
+    def __init__(self):
+        super().__init__('conversational_robot_core')
+
+        # Initialize CV bridge
+        self.bridge = CvBridge()
+
+        # Publishers and subscribers
+        self.speech_command_pub = self.create_publisher(
+            String, '/robot/speech_command', 10
+        )
+        self.text_command_pub = self.create_publisher(
+            String, '/robot/text_command', 10
+        )
+        self.response_pub = self.create_publisher(
+            String, '/robot/response', 10
+        )
+        self.system_status_pub = self.create_publisher(
+            String, '/robot/system_status', 10
+        )
+        self.visual_context_sub = self.create_subscription(
+            Image, '/camera/rgb/image_rect_color', self.visual_context_callback, 10
+        )
+
+        # Initialize speech components
+        self.setup_speech_system()
+
+        # Initialize NLP components
+        self.setup_nlp_system()
+
+        # Initialize dialogue manager
+        self.setup_dialogue_manager()
+
+        # System state
+        self.current_image = None
+        self.conversation_history = []
+        self.response_queue = queue.Queue()
+        self.user_input_queue = queue.Queue()
+        self.system_active = True
+
+        # Speech recognition thread
+        self.speech_thread = threading.Thread(target=self.speech_recognition_loop)
+        self.speech_thread.daemon = True
+        self.speech_thread.start()
+
+        # Dialogue processing thread
+        self.dialogue_thread = threading.Thread(target=self.dialogue_processing_loop)
+        self.dialogue_thread.daemon = True
+        self.dialogue_thread.start()
+
+        # Timer for system status updates
+        self.status_timer = self.create_timer(5.0, self.publish_system_status)
+
+        self.get_logger().info('Conversational Robot Core node initialized')
+
+    def setup_speech_system(self):
+        """Setup speech recognition and synthesis systems"""
+        try:
+            # Initialize speech recognizer
+            self.recognizer = sr.Recognizer()
+            self.microphone = sr.Microphone()
+
+            # Adjust for ambient noise
+            with self.microphone as source:
+                self.recognizer.adjust_for_ambient_noise(source)
+                self.get_logger().info('Adjusted for ambient noise')
+
+            # Set recognition parameters
+            self.recognizer.energy_threshold = 4000
+            self.recognizer.dynamic_energy_threshold = True
+
+            # Initialize text-to-speech engine
+            self.tts_engine = pyttsx3.init()
+
+            # Configure TTS properties
+            voices = self.tts_engine.getProperty('voices')
+            if voices:
+                self.tts_engine.setProperty('voice', voices[0].id)
+            self.tts_engine.setProperty('rate', 180)  # Words per minute
+            self.tts_engine.setProperty('volume', 0.9)
+
+            self.get_logger().info('Speech system initialized successfully')
+        except Exception as e:
+            self.get_logger().error(f'Failed to initialize speech system: {e}')
+
+    def setup_nlp_system(self):
+        """Setup natural language processing components"""
+        try:
+            # Load spaCy model for NLP
+            try:
+                self.nlp = spacy.load("en_core_web_sm")
+            except OSError:
+                self.get_logger().warn("spaCy 'en_core_web_sm' model not found. Installing...")
+                import subprocess
+                subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
+                self.nlp = spacy.load("en_core_web_sm")
+
+            # Initialize transformers pipeline for more advanced NLU
+            self.nlu_pipeline = pipeline(
+                "text-classification",
+                model="microsoft/DialoGPT-medium",  # Placeholder - use appropriate model
+                tokenizer="microsoft/DialoGPT-medium"
+            )
+
+            self.get_logger().info('NLP system initialized successfully')
+        except Exception as e:
+            self.get_logger().error(f'Failed to initialize NLP system: {e}')
+            self.nlp = None
+
+    def setup_dialogue_manager(self):
+        """Setup dialogue management system"""
+        self.dialogue_state = {
+            'current_topic': 'greeting',
+            'user_context': {},
+            'task_context': {},
+            'last_intent': None,
+            'conversation_turn': 0
+        }
+
+        # Define intent-action mappings
+        self.intent_map = {
+            'greeting': ['hello', 'hi', 'hey', 'greetings'],
+            'navigation': ['go to', 'move to', 'navigate to', 'go', 'move', 'walk to'],
+            'manipulation': ['pick up', 'grasp', 'take', 'lift', 'get', 'place', 'put'],
+            'information_request': ['what', 'where', 'when', 'how', 'who', 'tell me', 'explain'],
+            'confirmation': ['yes', 'yeah', 'yep', 'sure', 'ok', 'okay', 'correct'],
+            'negation': ['no', 'nope', 'not', 'never', 'stop', 'cancel'],
+            'question': ['?', 'question', 'ask']
+        }
+
+        self.get_logger().info('Dialogue manager initialized successfully')
+
+    def speech_recognition_loop(self):
+        """Continuously listen for speech input"""
+        while rclpy.ok() and self.system_active:
+            try:
+                with self.microphone as source:
+                    self.get_logger().debug('Listening for speech...')
+                    # Listen with timeout and phrase limit
+                    audio = self.recognizer.listen(source, timeout=1.0, phrase_time_limit=5.0)
+
+                try:
+                    # Recognize speech using Google Web Speech API
+                    text = self.recognizer.recognize_google(audio)
+                    self.get_logger().info(f'Recognized speech: {text}')
+
+                    # Add to input queue for processing
+                    self.user_input_queue.put({
+                        'type': 'speech',
+                        'text': text,
+                        'timestamp': time.time()
+                    })
+
+                except sr.UnknownValueError:
+                    self.get_logger().debug('Could not understand audio')
+                except sr.RequestError as e:
+                    self.get_logger().error(f'Error with speech recognition service: {e}')
+                except Exception as e:
+                    self.get_logger().error(f'Unexpected error in speech recognition: {e}')
+
+            except sr.WaitTimeoutError:
+                # Expected when timeout is reached and no speech detected
+                pass
+            except Exception as e:
+                self.get_logger().error(f'Error in speech recognition loop: {e}')
+
+            time.sleep(0.1)  # Small delay to prevent excessive CPU usage
+
+    def dialogue_processing_loop(self):
+        """Process dialogue inputs and generate responses"""
+        while rclpy.ok() and self.system_active:
+            try:
+                # Check for new inputs
+                if not self.user_input_queue.empty():
+                    user_input = self.user_input_queue.get_nowait()
+                    response = self.process_user_input(user_input)
+
+                    if response:
+                        # Publish response
+                        response_msg = String()
+                        response_msg.data = response
+                        self.response_pub.publish(response_msg)
+
+                        # Speak response
+                        self.speak_response(response)
+
+                time.sleep(0.05)  # Process at 20Hz
+            except queue.Empty:
+                time.sleep(0.05)
+            except Exception as e:
+                self.get_logger().error(f'Error in dialogue processing: {e}')
+                time.sleep(0.1)
+
+    def process_user_input(self, user_input):
+        """Process user input and generate appropriate response"""
+        input_text = user_input['text'].lower().strip()
+
+        # Add to conversation history
+        self.conversation_history.append({
+            'speaker': 'user',
+            'text': input_text,
+            'timestamp': user_input['timestamp'],
+            'type': user_input['type']
+        })
+
+        # Update dialogue state
+        self.dialogue_state['conversation_turn'] += 1
+
+        # Classify intent
+        intent = self.classify_intent(input_text)
+        self.dialogue_state['last_intent'] = intent
+
+        # Process based on intent
+        if intent == 'greeting':
+            response = self.handle_greeting(input_text)
+        elif intent == 'navigation':
+            response = self.handle_navigation(input_text)
+        elif intent == 'manipulation':
+            response = self.handle_manipulation(input_text)
+        elif intent == 'information_request':
+            response = self.handle_information_request(input_text)
+        elif intent == 'confirmation':
+            response = self.handle_confirmation(input_text)
+        elif intent == 'negation':
+            response = self.handle_negation(input_text)
+        else:
+            response = self.handle_general_conversation(input_text)
+
+        # Add response to history
+        self.conversation_history.append({
+            'speaker': 'robot',
+            'text': response,
+            'timestamp': time.time(),
+            'type': 'response'
+        })
+
+        # Keep conversation history to reasonable size
+        if len(self.conversation_history) > 50:
+            self.conversation_history = self.conversation_history[-20:]  # Keep last 20 exchanges
+
+        return response
+
+    def classify_intent(self, text):
+        """Classify user input intent using keyword matching and NLP"""
+        text_lower = text.lower()
+
+        # Keyword-based intent classification
+        for intent, keywords in self.intent_map.items():
+            for keyword in keywords:
+                if keyword in text_lower:
+                    return intent
+
+        # If no clear intent found, use NLP analysis
+        if self.nlp:
+            doc = self.nlp(text)
+
+            # Analyze sentence structure and keywords
+            for token in doc:
+                if token.pos_ in ['VERB'] and token.lemma_ in ['go', 'move', 'navigate', 'walk']:
+                    return 'navigation'
+                elif token.pos_ in ['VERB'] and token.lemma_ in ['pick', 'grasp', 'take', 'place', 'put', 'lift']:
+                    return 'manipulation'
+                elif token.pos_ in ['PRON', 'DET'] and token.text in ['what', 'where', 'when', 'how', 'who']:
+                    return 'information_request'
+
+        # Default to general conversation
+        return 'general'
+
+    def handle_greeting(self, text):
+        """Handle greeting intents"""
+        greetings = ['hello', 'hi', 'hey', 'greetings', 'good morning', 'good afternoon', 'good evening']
+
+        for greeting in greetings:
+            if greeting in text:
+                return f"Hello! I'm your conversational robot assistant. How can I help you today?"
+
+        return "Hi there! How can I assist you?"
+
+    def handle_navigation(self, text):
+        """Handle navigation-related intents"""
+        # Extract location information
+        location = self.extract_location(text)
+
+        if location:
+            # Publish navigation command
+            nav_cmd = String()
+            nav_cmd.data = f"NAVIGATE_TO:{location}"
+            self.speech_command_pub.publish(nav_cmd)
+
+            return f"Okay, I'll navigate to the {location}."
+        else:
+            return "Where would you like me to go?"
+
+    def handle_manipulation(self, text):
+        """Handle manipulation-related intents"""
+        # Extract object information
+        obj = self.extract_object(text)
+
+        if obj:
+            # Publish manipulation command
+            manip_cmd = String()
+            manip_cmd.data = f"MANIPULATE:{obj}"
+            self.speech_command_pub.publish(manip_cmd)
+
+            return f"Okay, I'll {text.split()[0]} the {obj}."
+        else:
+            return "What would you like me to manipulate?"
+
+    def handle_information_request(self, text):
+        """Handle information requests"""
+        if 'where' in text:
+            return "I am currently in the main laboratory area, near the workbench."
+        elif 'what' in text:
+            return "I am a conversational robot designed to assist with various tasks. I can navigate, manipulate objects, and engage in natural conversation."
+        elif 'how' in text:
+            return "I process your speech using natural language understanding, then execute appropriate actions using my robotic systems."
+        else:
+            return "I can help with navigation, object manipulation, and answering questions. What would you like to know?"
+
+    def handle_confirmation(self, text):
+        """Handle confirmation responses"""
+        return "Great! I'll proceed with the task."
+
+    def handle_negation(self, text):
+        """Handle negative responses"""
+        if 'stop' in text or 'cancel' in text:
+            # Publish stop command
+            stop_cmd = String()
+            stop_cmd.data = "STOP"
+            self.speech_command_pub.publish(stop_cmd)
+            return "Okay, I'll stop what I'm doing."
+        else:
+            return "I understand. How else can I help?"
+
+    def handle_general_conversation(self, text):
+        """Handle general conversation"""
+        # Use simple response generation
+        responses = [
+            f"I understand you said: '{text}'. How can I assist you?",
+            f"Thanks for letting me know: '{text}'. What else can I do for you?",
+            f"I heard: '{text}'. I'm here to help with tasks and questions.",
+            f"Interesting. You mentioned '{text}'. How can I be of service?"
+        ]
+
+        import random
+        return responses[self.dialogue_state['conversation_turn'] % len(responses)]
+
+    def extract_location(self, text):
+        """Extract location from text using NLP"""
+        if self.nlp:
+            doc = self.nlp(text)
+
+            # Look for location entities
+            for ent in doc.ents:
+                if ent.label_ in ['LOC', 'GPE', 'FAC']:  # Location, GeoPolitical Entity, Facility
+                    return ent.text
+
+            # Look for common location indicators
+            location_indicators = ['to the', 'at the', 'in the', 'near the', 'by the', 'by']
+            for indicator in location_indicators:
+                if indicator in text:
+                    # Extract the part after the indicator
+                    parts = text.split(indicator)
+                    if len(parts) > 1:
+                        location = parts[1].split()[0]  # Take first word after indicator
+                        return location
+
+        return None
+
+    def extract_object(self, text):
+        """Extract object from text using NLP"""
+        if self.nlp:
+            doc = self.nlp(text)
+
+            # Look for direct objects
+            for token in doc:
+                if token.dep_ == 'dobj':  # Direct object dependency
+                    return token.text
+
+            # Look for noun phrases that could be objects
+            for chunk in doc.noun_chunks:
+                # Skip pronouns, focus on actual objects
+                if chunk.root.pos_ == 'NOUN':
+                    return chunk.text
+
+        return None
+
+    def speak_response(self, response):
+        """Speak response using text-to-speech"""
+        try:
+            self.tts_engine.say(response)
+            self.tts_engine.runAndWait()
+        except Exception as e:
+            self.get_logger().error(f'Error in text-to-speech: {e}')
+
+    def visual_context_callback(self, msg):
+        """Process visual context for multimodal interaction"""
+        try:
+            self.current_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='rgb8')
+        except Exception as e:
+            self.get_logger().error(f'Error processing visual context: {e}')
+
+    def publish_system_status(self):
+        """Publish system status information"""
+        status_msg = String()
+        status_msg.data = f"Active conversations: {len(self.conversation_history)}, Last intent: {self.dialogue_state['last_intent']}"
+        self.system_status_pub.publish(status_msg)
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = ConversationalRobotCoreNode()
+
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        node.system_active = False
+        node.speech_thread.join(timeout=1.0)
+        node.dialogue_thread.join(timeout=1.0)
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Context-Aware Dialogue Manager
+```python
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String, Float32MultiArray
+from geometry_msgs.msg import Pose, Point
+from sensor_msgs.msg import Image, LaserScan
+from cv_bridge import CvBridge
+import numpy as np
+import math
+from collections import deque
+import json
+import time
+
+class ContextAwareDialogueManager(Node):
+    def __init__(self):
+        super().__init__('context_aware_dialogue_manager')
+
+        # Initialize CV bridge
+        self.bridge = CvBridge()
+
+        # Publishers and subscribers
+        self.user_input_sub = self.create_subscription(
+            String, '/user/input', self.user_input_callback, 10
+        )
+        self.robot_pose_sub = self.create_subscription(
+            Pose, '/robot/pose', self.robot_pose_callback, 10
+        )
+        self.laser_scan_sub = self.create_subscription(
+            LaserScan, '/scan', self.laser_scan_callback, 10
+        )
+        self.visual_context_sub = self.create_subscription(
+            Image, '/camera/rgb/image_rect_color', self.visual_context_callback, 10
+        )
+        self.response_pub = self.create_publisher(
+            String, '/robot/response', 10
+        )
+        self.action_command_pub = self.create_publisher(
+            String, '/robot/action_command', 10
+        )
+        self.context_visualization_pub = self.create_publisher(
+            Float32MultiArray, '/context/visualization', 10
+        )
+
+        # Initialize dialogue state
+        self.setup_dialogue_state()
+
+        # Context tracking
+        self.robot_pose = None
+        self.laser_data = None
+        self.visual_context = None
+        self.environment_map = {}
+        self.object_memory = {}
+        self.location_memory = {}
+
+        # Dialogue processing parameters
+        self.conversation_memory_size = 10
+        self.context_update_rate = 0.5  # Hz
+        self.response_timeout = 5.0  # seconds
+
+        # Timers
+        self.context_timer = self.create_timer(1.0/self.context_update_rate, self.update_context)
+        self.response_timer = self.create_timer(0.1, self.process_pending_responses)
+
+        self.get_logger().info('Context-Aware Dialogue Manager initialized')
+
+    def setup_dialogue_state(self):
+        """Initialize dialogue state management"""
+        self.dialogue_state = {
+            'current_topic': 'greeting',
+            'topic_stack': ['greeting'],
+            'user_goals': [],
+            'robot_goals': [],
+            'shared_context': {},
+            'conversation_history': deque(maxlen=self.conversation_memory_size),
+            'turn_count': 0,
+            'last_spoke': time.time(),
+            'attention_objects': [],
+            'focus_location': None,
+            'task_progress': {}
+        }
+
+    def user_input_callback(self, msg):
+        """Process user input with context awareness"""
+        user_text = msg.data
+        current_time = time.time()
+
+        # Add to conversation history
+        self.dialogue_state['conversation_history'].append({
+            'speaker': 'user',
+            'text': user_text,
+            'timestamp': current_time,
+            'context_snapshot': self.get_context_snapshot()
+        })
+
+        self.dialogue_state['turn_count'] += 1
+
+        # Process input with context
+        response = self.process_input_with_context(user_text)
+
+        # Publish response
+        if response:
+            response_msg = String()
+            response_msg.data = response
+            self.response_pub.publish(response_msg)
+
+            # Add to conversation history
+            self.dialogue_state['conversation_history'].append({
+                'speaker': 'robot',
+                'text': response,
+                'timestamp': time.time(),
+                'context_snapshot': self.get_context_snapshot()
+            })
+
+    def robot_pose_callback(self, msg):
+        """Update robot pose in context"""
+        self.robot_pose = msg
+
+    def laser_scan_callback(self, msg):
+        """Update laser scan data in context"""
+        self.laser_data = msg
+
+    def visual_context_callback(self, msg):
+        """Update visual context"""
+        try:
+            self.visual_context = self.bridge.imgmsg_to_cv2(msg, desired_encoding='rgb8')
+        except Exception as e:
+            self.get_logger().error(f'Error processing visual context: {e}')
+
+    def get_context_snapshot(self):
+        """Get current context snapshot"""
+        context = {
+            'timestamp': time.time(),
+            'robot_pose': self.pose_to_dict(self.robot_pose) if self.robot_pose else None,
+            'environment': self.get_environment_context(),
+            'visual_objects': self.get_visual_objects(),
+            'dialogue_state': self.dialogue_state.copy()
+        }
+        return context
+
+    def get_environment_context(self):
+        """Get environmental context information"""
+        env_context = {}
+
+        if self.laser_data:
+            # Analyze laser scan for nearby objects
+            ranges = np.array(self.laser_data.ranges)
+            valid_ranges = ranges[np.isfinite(ranges)]
+
+            if len(valid_ranges) > 0:
+                min_distance = np.min(valid_ranges)
+                env_context['closest_obstacle'] = float(min_distance)
+
+                # Count obstacles in different directions
+                front_scan = ranges[len(ranges)//2 - 30 : len(ranges)//2 + 30]
+                front_valid = front_scan[np.isfinite(front_scan)]
+                env_context['front_obstacles'] = len(front_valid)
+
+        if self.robot_pose:
+            env_context['current_location'] = {
+                'x': self.robot_pose.position.x,
+                'y': self.robot_pose.position.y,
+                'z': self.robot_pose.position.z
+            }
+
+        return env_context
+
+    def get_visual_objects(self):
+        """Get objects detected in visual context (simulated)"""
+        # In a real implementation, this would run object detection
+        # For this example, we'll simulate object detection
+        return [
+            {'name': 'table', 'confidence': 0.95, 'location': [1.0, 0.5, 0.0]},
+            {'name': 'cup', 'confidence': 0.87, 'location': [1.2, 0.6, 0.8]},
+            {'name': 'book', 'confidence': 0.78, 'location': [0.8, 0.4, 0.8}]
+        ]
+
+    def process_input_with_context(self, user_input):
+        """Process user input considering current context"""
+        # Analyze input in context
+        intent = self.analyze_intent_with_context(user_input)
+
+        # Update shared context based on input
+        self.update_shared_context(user_input, intent)
+
+        # Generate response based on intent and context
+        response = self.generate_contextual_response(user_input, intent)
+
+        # Update attention and focus
+        self.update_attention(user_input)
+
+        return response
+
+    def analyze_intent_with_context(self, user_input):
+        """Analyze user intent with environmental context"""
+        input_lower = user_input.lower()
+
+        # Context-dependent intent analysis
+        intent = {
+            'type': 'general',
+            'action': None,
+            'target': None,
+            'location': None,
+            'confidence': 0.8
+        }
+
+        # Navigation intents
+        if any(word in input_lower for word in ['go', 'move', 'navigate', 'walk', 'go to']):
+            intent['type'] = 'navigation'
+            intent['action'] = 'navigate'
+
+            # Extract location from context
+            if self.dialogue_state['focus_location']:
+                intent['target'] = self.dialogue_state['focus_location']
+            else:
+                # Try to extract location from input
+                intent['target'] = self.extract_location_from_input(user_input)
+
+        # Manipulation intents
+        elif any(word in input_lower for word in ['pick', 'grasp', 'take', 'lift', 'get', 'place', 'put']):
+            intent['type'] = 'manipulation'
+            intent['action'] = 'manipulate'
+
+            # Extract object from context
+            if self.dialogue_state['attention_objects']:
+                intent['target'] = self.dialogue_state['attention_objects'][0]
+            else:
+                # Try to extract object from input
+                intent['target'] = self.extract_object_from_input(user_input)
+
+        # Information requests
+        elif any(word in input_lower for word in ['where', 'what', 'how', 'when', 'who', 'tell me', 'show me']):
+            intent['type'] = 'information'
+            intent['action'] = 'inform'
+
+        return intent
+
+    def extract_location_from_input(self, input_text):
+        """Extract location from input text"""
+        # Simple location extraction
+        location_indicators = ['to the', 'at the', 'in the', 'near the', 'by the']
+
+        for indicator in location_indicators:
+            if indicator in input_text.lower():
+                parts = input_text.lower().split(indicator)
+                if len(parts) > 1:
+                    location = parts[1].split()[0]
+                    return location
+
+        return "unknown_location"
+
+    def extract_object_from_input(self, input_text):
+        """Extract object from input text"""
+        # Simple object extraction
+        words = input_text.lower().split()
+
+        # Common objects that might be referenced
+        common_objects = ['cup', 'book', 'phone', 'laptop', 'bottle', 'box', 'chair', 'table']
+
+        for word in words:
+            if word in common_objects:
+                return word
+
+        return "unknown_object"
+
+    def update_shared_context(self, user_input, intent):
+        """Update shared context based on user input and intent"""
+        # Update based on intent type
+        if intent['type'] == 'navigation' and intent['target']:
+            self.dialogue_state['focus_location'] = intent['target']
+
+        elif intent['type'] == 'manipulation' and intent['target']:
+            self.dialogue_state['attention_objects'].append(intent['target'])
+            # Keep only recent attention objects
+            if len(self.dialogue_state['attention_objects']) > 5:
+                self.dialogue_state['attention_objects'] = self.dialogue_state['attention_objects'][-3:]
+
+    def generate_contextual_response(self, user_input, intent):
+        """Generate response based on context and intent"""
+        response_templates = {
+            'navigation': [
+                f"Okay, I'll navigate to the {intent['target']}.",
+                f"Moving toward the {intent['target']} now.",
+                f"Setting navigation goal to {intent['target']}."
+            ],
+            'manipulation': [
+                f"I'll get the {intent['target']} for you.",
+                f"Attempting to grasp the {intent['target']}.",
+                f"Reaching for the {intent['target']}."
+            ],
+            'information': [
+                "I can help with that. What specifically would you like to know?",
+                "I understand you're asking about something. Could you clarify?",
+                "I'm ready to provide information. What do you need to know?"
+            ],
+            'general': [
+                f"I understand you said: '{user_input}'. How can I assist?",
+                f"Thanks for the input: '{user_input}'. What would you like me to do?",
+                f"I heard: '{user_input}'. How can I help you?"
+            ]
+        }
+
+        import random
+        responses = response_templates.get(intent['type'], response_templates['general'])
+        return random.choice(responses)
+
+    def update_attention(self, user_input):
+        """Update attention based on user input"""
+        input_lower = user_input.lower()
+
+        # Update focus based on demonstrative language
+        if 'this' in input_lower or 'that' in input_lower:
+            # In a real system, this would use spatial reasoning
+            # For simulation, use the most recently detected object
+            if self.dialogue_state['attention_objects']:
+                self.dialogue_state['focus_location'] = self.dialogue_state['attention_objects'][-1]
+
+    def update_context(self):
+        """Update context information"""
+        # Publish context visualization
+        if self.robot_pose:
+            context_data = Float32MultiArray()
+            context_data.data = [
+                float(self.robot_pose.position.x),
+                float(self.robot_pose.position.y),
+                float(self.robot_pose.position.z),
+                len(self.dialogue_state['attention_objects']),
+                self.dialogue_state['turn_count']
+            ]
+            self.context_visualization_pub.publish(context_data)
+
+    def process_pending_responses(self):
+        """Process any pending responses"""
+        # This method runs periodically to handle response processing
+        pass
+
+    def pose_to_dict(self, pose):
+        """Convert Pose message to dictionary"""
+        if pose:
+            return {
+                'position': {
+                    'x': pose.position.x,
+                    'y': pose.position.y,
+                    'z': pose.position.z
+                },
+                'orientation': {
+                    'x': pose.orientation.x,
+                    'y': pose.orientation.y,
+                    'z': pose.orientation.z,
+                    'w': pose.orientation.w
+                }
+            }
+        return None
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = ContextAwareDialogueManager()
+
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Social Interaction Manager
+```python
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String, Bool, Int8
+from geometry_msgs.msg import Pose, Point, Vector3
+from sensor_msgs.msg import Image, LaserScan
+from visualization_msgs.msg import Marker, MarkerArray
+from cv_bridge import CvBridge
+import numpy as np
+import math
+import time
+from collections import deque
+import random
+
+class SocialInteractionManager(Node):
+    def __init__(self):
+        super().__init__('social_interaction_manager')
+
+        # Initialize CV bridge
+        self.bridge = CvBridge()
+
+        # Publishers and subscribers
+        self.user_input_sub = self.create_subscription(
+            String, '/user/input', self.user_input_callback, 10
+        )
+        self.robot_pose_sub = self.create_subscription(
+            Pose, '/robot/pose', self.robot_pose_callback, 10
+        )
+        self.human_pose_sub = self.create_subscription(
+            Pose, '/human/pose', self.human_pose_callback, 10
+        )
+        self.scan_sub = self.create_subscription(
+            LaserScan, '/scan', self.laser_scan_callback, 10
+        )
+        self.response_pub = self.create_publisher(
+            String, '/robot/social_response', 10
+        )
+        self.social_behavior_pub = self.create_publisher(
+            String, '/robot/social_behavior', 10
+        )
+        self.visualization_pub = self.create_publisher(
+            MarkerArray, '/social/visualization', 10
+        )
+
+        # Initialize social interaction state
+        self.setup_social_state()
+
+        # Robot and human tracking
+        self.robot_pose = None
+        self.human_poses = {}  # Track multiple humans
+        self.laser_data = None
+
+        # Social behavior parameters
+        self.personal_space_radius = 1.0  # meters
+        self.comfort_zone_radius = 0.5   # meters
+        self.social_attention_span = 30.0  # seconds
+
+        # Timers
+        self.social_timer = self.create_timer(0.5, self.update_social_state)
+        self.behavior_timer = self.create_timer(1.0, self.select_social_behavior)
+
+        self.get_logger().info('Social Interaction Manager initialized')
+
+    def setup_social_state(self):
+        """Initialize social interaction state"""
+        self.social_state = {
+            'current_engagement': None,
+            'engagement_history': deque(maxlen=10),
+            'social_attention': {},  # Attention weights for each human
+            'social_mood': 'neutral',
+            'interaction_mode': 'idle',  # idle, approaching, engaging, avoiding
+            'last_interaction_time': time.time(),
+            'social_rules': {
+                'maintain_personal_space': True,
+                'make_eye_contact': True,
+                'use_appropriate_gestures': True,
+                'respect_turn_taking': True
+            }
+        }
+
+    def user_input_callback(self, msg):
+        """Process user input for social interaction"""
+        user_text = msg.data
+        self.get_logger().info(f'Received social input: {user_text}')
+
+        # Determine if this is directed at the robot
+        if self.is_input_directed_at_robot(user_text):
+            # Update engagement
+            self.social_state['current_engagement'] = self.estimate_speaker()
+            self.social_state['last_interaction_time'] = time.time()
+
+            # Generate social response
+            response = self.generate_social_response(user_text)
+            if response:
+                response_msg = String()
+                response_msg.data = response
+                self.response_pub.publish(response_msg)
+
+    def robot_pose_callback(self, msg):
+        """Update robot pose"""
+        self.robot_pose = msg
+
+    def human_pose_callback(self, msg):
+        """Update human pose (simplified - in reality would track multiple humans)"""
+        # For this example, assume we're tracking one human
+        human_id = "human_0"
+        self.human_poses[human_id] = msg
+
+    def laser_scan_callback(self, msg):
+        """Update laser scan data"""
+        self.laser_data = msg
+
+    def is_input_directed_at_robot(self, text):
+        """Check if input is directed at the robot"""
+        text_lower = text.lower()
+
+        # Check for robot name/direct address
+        robot_names = ['robot', 'hey robot', 'you', 'excuse me']
+        for name in robot_names:
+            if name in text_lower:
+                return True
+
+        # Check for imperative commands
+        imperatives = ['please', 'could you', 'can you', 'help', 'assist']
+        for word in imperatives:
+            if word in text_lower:
+                return True
+
+        # If no clear indication, assume it's directed if within social attention span
+        if time.time() - self.social_state['last_interaction_time'] < self.social_attention_span:
+            return True
+
+        return False
+
+    def estimate_speaker(self):
+        """Estimate which human is speaking (simplified)"""
+        if self.human_poses:
+            # For this example, return the first human
+            return list(self.human_poses.keys())[0]
+        return None
+
+    def generate_social_response(self, user_input):
+        """Generate socially appropriate response"""
+        # Update social mood based on interaction
+        self.update_social_mood(user_input)
+
+        # Select response based on current social state
+        if self.social_state['social_mood'] == 'positive':
+            responses = [
+                f"I'm glad you're talking to me! You said: {user_input}",
+                f"Thank you for including me in the conversation.",
+                f"I'm happy to help with that: {user_input}"
+            ]
+        elif self.social_state['social_mood'] == 'neutral':
+            responses = [
+                f"I understand you said: {user_input}",
+                f"How can I assist you with that?",
+                f"I'm here to help. What would you like me to do?"
+            ]
+        else:  # negative or cautious
+            responses = [
+                f"I want to help, but could you please clarify: {user_input}",
+                f"I'm listening. Can you repeat that?",
+                f"I heard you, but I want to make sure I understand correctly."
+            ]
+
+        return random.choice(responses)
+
+    def update_social_mood(self, user_input):
+        """Update robot's social mood based on interaction"""
+        positive_indicators = ['please', 'thank you', 'please', 'kindly', 'appreciate']
+        negative_indicators = ['stop', 'go away', 'leave', 'annoying', 'bother']
+
+        input_lower = user_input.lower()
+
+        # Count positive and negative indicators
+        pos_count = sum(1 for word in positive_indicators if word in input_lower)
+        neg_count = sum(1 for word in negative_indicators if word in input_lower)
+
+        if pos_count > neg_count:
+            self.social_state['social_mood'] = 'positive'
+        elif neg_count > pos_count:
+            self.social_state['social_mood'] = 'cautious'
+        else:
+            # Maintain current mood or default to neutral
+            if self.social_state['social_mood'] == 'unknown':
+                self.social_state['social_mood'] = 'neutral'
+
+    def update_social_state(self):
+        """Update social state based on environmental context"""
+        if self.robot_pose and self.human_poses:
+            for human_id, human_pose in self.human_poses.items():
+                # Calculate distance to human
+                distance = self.calculate_distance(self.robot_pose, human_pose)
+
+                # Update attention based on proximity
+                attention = max(0.0, min(1.0, (2.0 - distance) / 2.0))  # Higher attention when closer
+                self.social_state['social_attention'][human_id] = attention
+
+                # Determine appropriate interaction mode
+                if distance < self.comfort_zone_radius:
+                    self.social_state['interaction_mode'] = 'engaging'
+                elif distance < self.personal_space_radius:
+                    self.social_state['interaction_mode'] = 'approaching'
+                else:
+                    self.social_state['interaction_mode'] = 'idle'
+
+        # Publish visualization markers
+        self.publish_social_visualization()
+
+    def select_social_behavior(self):
+        """Select appropriate social behavior based on current state"""
+        behavior = self.determine_social_behavior()
+
+        if behavior:
+            behavior_msg = String()
+            behavior_msg.data = behavior
+            self.social_behavior_pub.publish(behavior_msg)
+
+    def determine_social_behavior(self):
+        """Determine appropriate social behavior"""
+        mode = self.social_state['interaction_mode']
+        mood = self.social_state['social_mood']
+
+        if mode == 'engaging':
+            if mood == 'positive':
+                return "MAINTAIN_EYE_CONTACT_AND_FACE_HUMAN"
+            elif mood == 'cautious':
+                return "INCREASE_DISTANCE_SLIGHTLY"
+            else:
+                return "MAINTAIN_NEUTRAL_POSTURE"
+
+        elif mode == 'approaching':
+            if mood == 'positive':
+                return "APPROACH_GRADUALLY_WITH_OPEN_POSTURE"
+            else:
+                return "APPROACH_SLOWLY_AND_CAREFULLY"
+
+        elif mode == 'avoiding':
+            return "INCREASE_DISTANCE_AND_REDUCE_ATTENTION"
+
+        else:  # idle
+            return "SCANNING_FOR_SOCIAL_OPPORTUNITIES"
+
+    def calculate_distance(self, pose1, pose2):
+        """Calculate distance between two poses"""
+        dx = pose1.position.x - pose2.position.x
+        dy = pose1.position.y - pose2.position.y
+        dz = pose1.position.z - pose2.position.z
+        return math.sqrt(dx*dx + dy*dy + dz*dz)
+
+    def publish_social_visualization(self):
+        """Publish visualization markers for social interaction"""
+        marker_array = MarkerArray()
+
+        # Clear old markers
+        clear_marker = Marker()
+        clear_marker.header.frame_id = 'map'
+        clear_marker.header.stamp = self.get_clock().now().to_msg()
+        clear_marker.ns = 'social_interaction'
+        clear_marker.id = 0
+        clear_marker.action = Marker.DELETEALL
+        marker_array.markers.append(clear_marker)
+
+        # Visualize personal space for each human
+        for i, (human_id, human_pose) in enumerate(self.human_poses.items()):
+            if self.robot_pose:
+                # Personal space visualization
+                personal_space = Marker()
+                personal_space.header.frame_id = 'map'
+                personal_space.header.stamp = self.get_clock().now().to_msg()
+                personal_space.ns = 'personal_space'
+                personal_space.id = i * 2 + 1
+                personal_space.type = Marker.SPHERE
+                personal_space.action = Marker.ADD
+
+                personal_space.pose.position = human_pose.position
+                personal_space.pose.orientation.w = 1.0
+                personal_space.scale.x = self.personal_space_radius * 2
+                personal_space.scale.y = self.personal_space_radius * 2
+                personal_space.scale.z = 0.1  # Flat circle
+
+                # Color based on attention level
+                attention = self.social_state['social_attention'].get(human_id, 0.0)
+                personal_space.color.r = 1.0 - attention  # Red when low attention
+                personal_space.color.g = attention      # Green when high attention
+                personal_space.color.b = 0.5
+                personal_space.color.a = 0.3
+
+                marker_array.markers.append(personal_space)
+
+                # Robot position marker
+                robot_marker = Marker()
+                robot_marker.header.frame_id = 'map'
+                robot_marker.header.stamp = self.get_clock().now().to_msg()
+                robot_marker.ns = 'robot_position'
+                robot_marker.id = i * 2 + 2
+                robot_marker.type = Marker.SPHERE
+                robot_marker.action = Marker.ADD
+
+                robot_marker.pose.position = self.robot_pose.position
+                robot_marker.pose.orientation.w = 1.0
+                robot_marker.scale.x = 0.3
+                robot_marker.scale.y = 0.3
+                robot_marker.scale.z = 0.3
+                robot_marker.color.r = 0.0
+                robot_marker.color.g = 0.0
+                robot_marker.color.b = 1.0  # Blue for robot
+                robot_marker.color.a = 0.8
+
+                marker_array.markers.append(robot_marker)
+
+        self.visualization_pub.publish(marker_array)
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = SocialInteractionManager()
+
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+## Practical Lab / Simulation
+
+### Lab Exercise 1: Conversational Core Implementation
+
+1. Implement the Conversational Robot Core Node
+2. Test speech recognition with various accents and noise conditions
+3. Validate natural language understanding capabilities
+4. Evaluate text-to-speech quality and naturalness
+5. Test dialogue management with different conversation patterns
+
+### Lab Exercise 2: Context-Aware Dialogue
+
+1. Implement the Context-Aware Dialogue Manager
+2. Test multimodal context integration (speech + vision + location)
+3. Validate contextual response generation
+4. Evaluate attention and focus tracking
+5. Test with complex, multi-turn conversations
+
+### Lab Exercise 3: Social Interaction Management
+
+1. Implement the Social Interaction Manager
+2. Test personal space management and social rules
+3. Validate social behavior selection algorithms
+4. Evaluate human-robot interaction quality
+5. Test with multiple humans in environment
+
+### Lab Exercise 4: Integration and Testing
+
+1. Connect all conversational components together
+2. Test end-to-end conversational robotics pipeline
+3. Validate system robustness with various inputs
+4. Evaluate response times and naturalness
+5. Test error handling and recovery
+
+### Lab Exercise 5: User Experience Evaluation
+
+1. Conduct user studies with the conversational system
+2. Evaluate naturalness and usability of interaction
+3. Assess user satisfaction and engagement
+4. Gather feedback for system improvements
+5. Document interaction patterns and common issues
+
+### Lab Exercise 6: Performance Optimization
+
+1. Profile conversational system for computational bottlenecks
+2. Optimize NLP models for real-time performance
+3. Test system performance on different hardware platforms
+4. Evaluate power consumption vs. performance trade-offs
+5. Document optimal configurations for different scenarios
+
+## Real-World Mapping
+
+### Industrial Applications
+- **Service Robotics**: Customer service robots with natural language interfaces
+- **Healthcare**: Assistive robots for elderly care and patient interaction
+- **Education**: Educational robots for interactive learning experiences
+
+### Research Applications
+- **Human-Robot Interaction**: Advanced multimodal interfaces
+- **Social Robotics**: Natural interaction for service applications
+- **Cognitive Robotics**: Integrated perception, reasoning, and social behavior
+
+### Key Success Factors
+- **Natural Interaction**: Intuitive interfaces for human-robot collaboration
+- **Context Awareness**: Understanding of physical and conversational context
+- **Social Appropriateness**: Following social norms and etiquette
+- **Robustness**: Reliable operation in varied social situations
+- **Adaptability**: Learning and adapting to user preferences
+
+## Summary
+
+Chapter 2 has explored Conversational Robotics, which integrates natural language processing with physical robotics to enable meaningful dialogue between humans and robots. We've examined the conversational robotics architecture, which connects speech processing, natural language understanding, dialogue management, and robot action execution. The examples demonstrated practical implementations of conversational core functionality, context-aware dialogue management, and social interaction management. The hands-on lab exercises provide experience with implementing and validating conversational robotics systems. This foundation enables the development of sophisticated Physical AI systems that can engage in natural, context-aware interactions with humans while performing physical tasks.

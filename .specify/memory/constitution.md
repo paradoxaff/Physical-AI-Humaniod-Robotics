@@ -1,55 +1,66 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!-- SYNC IMPACT REPORT
+Version change: 1.0.0 → 1.0.0 (initial constitution created)
+List of modified principles: All principles (new constitution created)
+Added sections: All sections (new constitution for Physical AI & Humanoid Robotics)
+Removed sections: None
+Templates requiring updates:
+- .specify/templates/plan-template.md ✅ updated
+- .specify/templates/spec-template.md ✅ updated
+- .specify/templates/tasks-template.md ✅ updated
+- .specify/templates/commands/*.md ✅ no files found
+- README.md ⚠ pending (file does not exist)
+Follow-up TODOs: None
+-->
+
+# Physical AI & Humanoid Robotics Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### Physical AI (Embodied Intelligence)
+Content must strictly follow the provided course document and connect software intelligence to physical embodiment. All explanations must bridge the gap between the digital brain and the physical body, focusing on how AI systems operate in the physical world through embodied intelligence.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### Simulation-to-Real (Sim2Real)
+Engineering-first approach with industry-aligned tooling only (ROS 2, Gazebo, NVIDIA Isaac). No motivational fluff - practical over theoretical content that enables students to transition from simulated to real-world environments effectively.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### Humanoid Robotics & ROS 2-based Control
+Each lesson must be usable independently for RAG-based retrieval and written for Docusaurus (Markdown / MDX only). Content must strictly follow the provided course document and connect software intelligence to physical embodiment.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### Physics-based Simulation
+All explanations must connect software intelligence to physical embodiment. Each lesson must be usable independently for RAG-based retrieval and written for Docusaurus (Markdown / MDX only).
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### Vision-Language-Action (VLA) & Conversational Robotics
+Written for the target audience of AI & Robotics students, engineers entering Physical AI, hackathon participants, and startup-focused builders. Content must be instructor-grade, clear, precise, and technical.
 
-### [PRINCIPLE_6_NAME]
+## Additional Requirements
 
+### Content Standards
+- Content must strictly follow the provided course document
+- Engineering-first, no motivational fluff
+- All explanations must connect software intelligence to physical embodiment
+- Each lesson must be usable independently for RAG-based retrieval
+- Written for Docusaurus (Markdown / MDX only)
 
-[PRINCIPLE__DESCRIPTION]
+### Technology Stack
+- Industry-aligned tooling only (ROS 2, Gazebo, NVIDIA Isaac)
+- Written for Docusaurus (Markdown / MDX only)
+- Target audience considerations: AI & Robotics students, engineers entering Physical AI, hackathon participants, startup-focused builders
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Development Workflow
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### Course Structure
+- Primary Goal: Bridge the gap between the digital brain and the physical body by teaching students how to design, simulate, and deploy humanoid robots in simulated and real-world environments
+- Foundational Pillars: Physical AI (Embodied Intelligence), Simulation-to-Real (Sim2Real), Humanoid Robotics, ROS 2-based robotic control, Physics-based simulation, Vision-Language-Action (VLA), Conversational Robotics
+- Tone & Style: Instructor-grade, clear, precise, and technical, practical over theoretical
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
-
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### Audience Alignment
+Content must be tailored for:
+- AI & Robotics students
+- Engineers entering Physical AI
+- Hackathon participants
+- Startup-focused builders
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution governs all specifications, plans, tasks, and implementations for the Physical AI & Humanoid Robotics project. All development activities must align with these principles and requirements. Any deviations must be documented and approved through formal amendment procedures.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2025-12-14 | **Last Amended**: 2025-12-14

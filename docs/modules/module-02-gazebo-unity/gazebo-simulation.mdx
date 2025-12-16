@@ -1,0 +1,405 @@
+---
+title: Chapter 1 - Gazebo Simulation
+sidebar_label: Gazebo Simulation
+---
+
+# Chapter 1: Gazebo Simulation
+
+## Learning Objectives
+
+By the end of this chapter, you will be able to:
+- Install and configure Gazebo for robotics simulation
+- Create custom robot models and environments in Gazebo
+- Implement physics-based simulations with accurate dynamics
+- Integrate Gazebo with ROS 2 for robot control and perception
+- Design simulation scenarios for humanoid robot training
+- Evaluate simulation fidelity and validate results
+
+## Physical AI Concept
+
+Gazebo serves as a physics-based simulation environment that enables Physical AI systems to learn and refine behaviors in virtual worlds before deployment to real robots. For humanoid robotics, Gazebo provides realistic simulation of complex dynamics including balance, locomotion, and manipulation. The physics engine models real-world forces, friction, and collisions, allowing robots to develop robust control strategies in a safe, repeatable environment.
+
+Gazebo's role in Physical AI includes:
+- **Physics Simulation**: Accurate modeling of real-world physics for realistic robot interaction
+- **Sensor Simulation**: Realistic simulation of cameras, LIDAR, IMU, and other sensors
+- **Environment Modeling**: Creation of diverse scenarios for robot training and testing
+- **Control Integration**: Seamless integration with ROS 2 for real-time robot control
+- **Experimentation**: Safe testing of novel control algorithms without hardware risk
+
+## System Architecture
+
+### Gazebo Simulation Architecture
+
+```
+Gazebo Integration with ROS 2:
+┌─────────────────────────────────────────────────────────────────────┐
+│                        Gazebo Simulator                             │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐    │
+│  │   Physics       │  │   Sensor        │  │   Rendering     │    │
+│  │   Engine        │  │   Simulation    │  │   Engine        │    │
+│  │  • ODE/Bullet   │  │  • Camera      │  │  • OGRE         │    │
+│  │  • Collision    │  │  • LIDAR       │  │  • GUI          │    │
+│  │  • Dynamics     │  │  • IMU         │  │  • Visualization│    │
+│  │  • Contacts     │  │  • Force/Torque│  │                 │    │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘    │
+│              │                    │                    │           │
+│              ▼                    ▼                    ▼           │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │              Gazebo Plugins Framework                       │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │  │
+│  │  │  ROS 2      │  │  Control    │  │  Sensor     │        │  │
+│  │  │  Interface  │  │  Plugins    │  │  Plugins    │        │  │
+│  │  │  • Publishers│  │  • Joint   │  │  • Camera  │        │  │
+│  │  │  • Subscribers│ │  Controllers│  │  • LIDAR   │        │  │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘        │  │
+│  └─────────────────────────────────────────────────────────────┘  │
+│                                     │                            │
+│                                     ▼                            │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │                   ROS 2 Ecosystem                           │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │  │
+│  │  │   Robot     │  │  Planning   │  │  Perception  │        │  │
+│  │  │   Control   │  │  & Navigation│  │  & Learning │        │  │
+│  │  │  Nodes      │  │  Nodes      │  │  Nodes      │        │  │
+│  │  │  • Balance  │  │  • Path     │  │  • Vision   │        │  │
+│  │  │  • Locomotion│ │  Planning   │  │  Processing │        │  │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘        │  │
+│  └─────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Gazebo Plugin Architecture
+
+Gazebo uses a plugin system that allows custom functionality to be integrated:
+- **World Plugins**: Modify world behavior and physics
+- **Model Plugins**: Attach custom behavior to specific models
+- **Sensor Plugins**: Extend sensor capabilities
+- **System Plugins**: Modify core Gazebo functionality
+
+## Tools & Software
+
+This chapter uses:
+- **Gazebo Classic or Gazebo Garden/Harmonic** - Core simulation environment
+- **ROS 2 Humble Hawksbill** - Integration with robot control
+- **libgazebo** - C++ API for Gazebo
+- **sdformat** - SDF (Simulation Description Format) for model/world definitions
+- **RViz2** - Visualization for ROS 2 integration
+- **Gazebo Model Database** - Repository of pre-built robot models
+
+## Code / Configuration Examples
+
+### Custom Robot Model (SDF Format)
+```xml
+<?xml version="1.0" ?>
+<sdf version="1.7">
+  <model name="simple_humanoid">
+    <!-- Links definition -->
+    <link name="base_link">
+      <pose>0 0 0.5 0 0 0</pose>
+      <inertial>
+        <mass>10.0</mass>
+        <inertia>
+          <ixx>0.4</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.4</iyy>
+          <iyz>0</iyz>
+          <izz>0.2</izz>
+        </inertia>
+      </inertial>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>0.3 0.3 0.5</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.8 0.8 0.8 1</ambient>
+          <diffuse>0.8 0.8 0.8 1</diffuse>
+        </material>
+      </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.3 0.3 0.5</size>
+          </box>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Head link -->
+    <link name="head">
+      <pose>0 0 0.3 0 0 0</pose>
+      <inertial>
+        <mass>2.0</mass>
+        <inertia>
+          <ixx>0.01</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.01</iyy>
+          <iyz>0</iyz>
+          <izz>0.01</izz>
+        </inertia>
+      </inertial>
+      <visual name="head_visual">
+        <geometry>
+          <sphere>
+            <radius>0.1</radius>
+          </sphere>
+        </geometry>
+      </visual>
+      <collision name="head_collision">
+        <geometry>
+          <sphere>
+            <radius>0.1</radius>
+          </sphere>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Joints -->
+    <joint name="torso_to_head" type="revolute">
+      <parent>base_link</parent>
+      <child>head</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1.57</lower>
+          <upper>1.57</upper>
+        </limit>
+      </axis>
+    </joint>
+
+    <!-- ROS 2 Control Plugin -->
+    <plugin name="ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/simple_humanoid</robotNamespace>
+    </plugin>
+
+    <!-- IMU Sensor -->
+    <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>100</update_rate>
+      <pose>0 0 0.25 0 0 0</pose>
+      <plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
+        <robotNamespace>/simple_humanoid</robotNamespace>
+        <topicName>/imu/data</topicName>
+        <serviceName>/imu/service</serviceName>
+      </plugin>
+    </sensor>
+
+    <!-- Camera Sensor -->
+    <sensor name="camera" type="camera">
+      <always_on>true</always_on>
+      <update_rate>30</update_rate>
+      <pose>0.15 0 0.1 0 0 0</pose>
+      <camera name="head_camera">
+        <horizontal_fov>1.047</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.1</near>
+          <far>10</far>
+        </clip>
+      </camera>
+      <plugin name="camera_plugin" filename="libgazebo_ros_camera.so">
+        <robotNamespace>/simple_humanoid</robotNamespace>
+        <cameraName>head_camera</cameraName>
+        <imageTopicName>/camera/image_raw</imageTopicName>
+        <cameraInfoTopicName>/camera/camera_info</cameraInfoTopicName>
+      </plugin>
+    </sensor>
+  </model>
+</sdf>
+```
+
+### ROS 2 Controller for Gazebo Integration
+```python
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import Float64
+from sensor_msgs.msg import JointState, Imu
+from geometry_msgs.msg import Twist
+import math
+
+class GazeboController(Node):
+    def __init__(self):
+        super().__init__('gazebo_controller')
+
+        # Publishers for joint control
+        self.joint_cmd_pub = self.create_publisher(
+            Float64, '/simple_humanoid/joint_torso_to_head_position_controller/commands', 10
+        )
+
+        # Subscribers for sensor data
+        self.imu_sub = self.create_subscription(
+            Imu, '/simple_humanoid/imu/data', self.imu_callback, 10
+        )
+        self.joint_state_sub = self.create_subscription(
+            JointState, '/simple_humanoid/joint_states', self.joint_state_callback, 10
+        )
+
+        # Timer for control loop
+        self.control_timer = self.create_timer(0.01, self.control_loop)  # 100 Hz
+
+        # Robot state
+        self.current_joint_positions = {}
+        self.imu_data = None
+
+        self.get_logger().info('Gazebo controller initialized')
+
+    def imu_callback(self, msg):
+        """Process IMU data from simulation"""
+        self.imu_data = msg
+        self.get_logger().debug(f'IMU: linear_acceleration={msg.linear_acceleration}, angular_velocity={msg.angular_velocity}')
+
+    def joint_state_callback(self, msg):
+        """Process joint state data from simulation"""
+        for i, name in enumerate(msg.name):
+            if i < len(msg.position):
+                self.current_joint_positions[name] = msg.position[i]
+
+    def control_loop(self):
+        """Main control loop for robot in simulation"""
+        # Simple head control based on IMU data
+        if self.imu_data:
+            # Example: Keep head level based on IMU orientation
+            target_angle = -math.atan2(
+                self.imu_data.linear_acceleration.y,
+                self.imu_data.linear_acceleration.z
+            ) * 0.1  # Gentle correction
+
+            # Publish joint command
+            cmd_msg = Float64()
+            cmd_msg.data = target_angle
+            self.joint_cmd_pub.publish(cmd_msg)
+
+def main(args=None):
+    rclpy.init(args=args)
+    controller = GazeboController()
+
+    try:
+        rclpy.spin(controller)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        controller.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Launch File for Gazebo Simulation
+```xml
+<launch>
+  <!-- Arguments -->
+  <arg name="world" default="empty"/>
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
+
+  <!-- Start Gazebo -->
+  <include file="$(find-pkg-share gazebo_ros)/launch/gzserver.launch.py">
+    <arg name="world" value="$(var world)"/>
+    <arg name="paused" value="$(var paused)"/>
+    <arg name="use_sim_time" value="$(var use_sim_time)"/>
+    <arg name="debug" value="$(var debug)"/>
+  </include>
+
+  <include file="$(find-pkg-share gazebo_ros)/launch/gzclient.launch.py">
+    <arg name="gui" value="$(var gui)"/>
+  </include>
+
+  <!-- Spawn robot model -->
+  <node pkg="gazebo_ros" exec="spawn_entity.py"
+        args="-entity simple_humanoid -file $(find-pkg-share my_robot_description)/models/simple_humanoid.sdf -x 0 -y 0 -z 1"/>
+
+  <!-- Launch controller -->
+  <node pkg="my_simulation_pkg" exec="gazebo_controller" name="gazebo_controller"/>
+</launch>
+```
+
+## Practical Lab / Simulation
+
+### Lab Exercise 1: Gazebo Installation and Basic Simulation
+
+1. Install Gazebo Classic or Gazebo Garden/Harmonic:
+   ```bash
+   # For Ubuntu with ROS 2 Humble
+   sudo apt update
+   sudo apt install ros-humble-gazebo-*
+   ```
+
+2. Test basic Gazebo functionality:
+   ```bash
+   gazebo
+   ```
+
+3. Explore the Gazebo interface and basic models
+
+### Lab Exercise 2: Custom Robot Model Creation
+
+1. Create a simple robot model using the SDF format shown in the examples
+2. Place the model file in `~/.gazebo/models/simple_humanoid/`
+3. Launch Gazebo and insert your custom robot model
+4. Verify that the model appears correctly with proper physics properties
+
+### Lab Exercise 3: ROS 2 Integration
+
+1. Create a ROS 2 package for Gazebo integration:
+   ```bash
+   cd ~/ros2_ws/src
+   ros2 pkg create --build-type ament_python gazebo_integration
+   ```
+
+2. Implement the Gazebo controller from the example
+
+3. Create a launch file that starts Gazebo with your robot and the controller
+
+4. Test the integration by controlling the robot in simulation
+
+### Lab Exercise 4: Physics Parameter Tuning
+
+1. Experiment with different physics parameters in your SDF model
+2. Adjust mass, friction, and damping values
+3. Observe how these changes affect robot behavior
+4. Find optimal parameters for stable simulation
+
+### Lab Exercise 5: Sensor Integration
+
+1. Add various sensors to your robot model (camera, LIDAR, IMU)
+2. Verify that sensor data is published correctly
+3. Process sensor data in your ROS 2 controller
+4. Implement basic perception algorithms using simulated sensor data
+
+## Real-World Mapping
+
+### Industrial Applications
+- **Automotive**: Gazebo used to simulate autonomous vehicle scenarios and test perception algorithms
+- **Manufacturing**: Robot arms trained in Gazebo for assembly tasks before physical deployment
+- **Logistics**: Warehouse robots tested in Gazebo environments representing real facilities
+
+### Research Applications
+- **Humanoid Robotics**: Extensive use of Gazebo for balance control and locomotion research
+- **Swarm Robotics**: Multi-robot coordination tested in Gazebo before real-world deployment
+- **Space Robotics**: NASA and other agencies use Gazebo for space robot simulation
+
+### Academic Use Cases
+- **Robotics Courses**: Universities use Gazebo to teach robotics concepts without requiring hardware
+- **Competition Preparation**: Teams use Gazebo to prepare for robotics competitions like RoboCup
+- **Algorithm Development**: Researchers use Gazebo to develop and test new control algorithms
+
+### Key Success Factors
+- **Model Accuracy**: Robot models must accurately represent physical properties
+- **Sensor Fidelity**: Simulated sensors should closely match real sensor characteristics
+- **Physics Tuning**: Proper physics parameters for realistic behavior
+- **Validation**: Systematic comparison between simulation and reality performance
+
+## Summary
+
+Chapter 1 has introduced Gazebo as a powerful physics-based simulation environment for Physical AI and humanoid robotics. We've covered the architecture of Gazebo integration with ROS 2, the process of creating custom robot models, and practical examples of controlling robots in simulation. The hands-on lab exercises provide experience with setting up Gazebo, creating custom models, integrating with ROS 2, and tuning physics parameters. This foundation is essential for developing and testing humanoid robots in safe, repeatable virtual environments before real-world deployment.

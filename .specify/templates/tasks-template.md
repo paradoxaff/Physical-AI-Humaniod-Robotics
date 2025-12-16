@@ -7,6 +7,9 @@ description: "Task list template for feature implementation"
 
 **Input**: Design documents from `/specs/[###-feature-name]/`
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
+**Target Audience**: AI & Robotics students, engineers entering Physical AI, hackathon participants, startup-focused builders
+**Technology Stack**: ROS 2, Gazebo, NVIDIA Isaac
+**Content Focus**: Physical AI (Embodied Intelligence), Simulation-to-Real (Sim2Real), Humanoid Robotics, Physics-based simulation, Vision-Language-Action (VLA), Conversational Robotics
 
 **Tests**: The examples below include test tasks. Tests are OPTIONAL - only include them if explicitly requested in the feature specification.
 

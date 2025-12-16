@@ -1,0 +1,533 @@
+---
+title: Lesson 2 - Nodes, Topics, and Services
+sidebar_label: Nodes, Topics, and Services
+---
+
+# Lesson 2: Nodes, Topics, and Services
+
+## Learning Objectives
+
+By the end of this lesson, you will be able to:
+- Implement ROS 2 nodes with proper lifecycle management
+- Design and use custom message types for communication
+- Create publisher-subscriber patterns using topics
+- Implement request-response communication using services
+- Apply Quality of Service (QoS) policies appropriately
+- Debug communication issues between nodes
+
+## Physical AI Concept
+
+In Physical AI systems, the node-topic-service architecture enables modular development while maintaining tight integration between perception, decision-making, and action. Nodes represent functional units (sensors, controllers, AI modules) that communicate through well-defined interfaces. Topics enable asynchronous, many-to-many communication patterns typical in sensor data distribution, while services provide synchronous request-response patterns for critical operations requiring guaranteed delivery and response.
+
+This architecture supports:
+- **Modularity**: Components can be developed and tested independently
+- **Scalability**: New nodes can be added without modifying existing ones
+- **Real-time performance**: Direct communication paths minimize latency
+- **Fault tolerance**: Independent nodes prevent cascading failures
+- **Distributed computing**: Nodes can run on different hardware platforms
+
+## System Architecture
+
+### Communication Patterns in ROS 2
+
+```
+Topic Communication (Publisher-Subscriber):
+┌─────────────┐         ┌─────────────┐         ┌─────────────┐
+│ Publisher   │ ──────> │    Topic    │ ──────> │ Subscriber  │
+│ Node A      │         │   (DDS)     │         │ Node B      │
+│             │         │             │         │             │
+│ • Publishes │         │ • Routes    │         │ • Subscribes│
+│   messages  │         │   messages  │         │   to topic  │
+└─────────────┘         └─────────────┘         └─────────────┘
+       │                                               │
+       └───────────────────────────────────────────────┘
+                    (One-to-Many Pattern)
+
+Service Communication (Client-Server):
+┌─────────────┐         ┌─────────────┐         ┌─────────────┐
+│ Client      │ ──────> │   Service   │ ──────> │ Server      │
+│ Node A      │         │   (DDS)     │         │ Node B      │
+│             │         │             │         │             │
+│ • Makes     │         │ • Processes │         │ • Provides  │
+│   requests  │         │   requests  │         │   service   │
+└─────────────┘         └─────────────┘         └─────────────┘
+       ▲                                               │
+       └───────────────────────────────────────────────┘
+                    (Synchronous Request-Response)
+```
+
+### Quality of Service (QoS) Policies
+
+ROS 2 provides several QoS policies to ensure appropriate communication behavior:
+
+1. **Reliability**: Best effort vs Reliable delivery
+2. **Durability**: Volatile vs Transient local history
+3. **History**: Keep last N messages vs Keep all messages
+4. **Deadline**: Maximum time between consecutive messages
+5. **Liveliness**: How to determine if publisher is alive
+
+## Tools & Software
+
+This lesson uses:
+- **ROS 2 Humble Hawksbill** - Core framework
+- **rclpy** - Python client library for node implementation
+- **ros2msg** - Message definition tools
+- **ros2srv** - Service definition tools
+- **ros2 interface** - Interface introspection tools
+- **RViz2** - Visualization for message flow
+- **rqt** - GUI debugging tools
+
+## Code / Configuration Examples
+
+### Creating Custom Message Types
+
+First, create a custom message definition file `msg/ObjectDetection.msg`:
+
+```
+# ObjectDetection.msg
+# Represents a detected object in the environment
+
+# Position of the object in image coordinates
+float64 x
+float64 y
+float64 z  # depth if available
+
+# Object properties
+string object_class
+float32 confidence
+float64[] bounding_box  # [x_min, y_min, x_max, y_max]
+
+# Timestamp
+builtin_interfaces/Time timestamp
+```
+
+Create a custom service definition file `srv/FindObject.srv`:
+
+```
+# FindObject.srv
+# Request to find a specific object in the environment
+
+string object_name  # Name of object to find
+---
+bool success        # True if object was found
+ObjectDetection[] detections  # Array of detected objects matching the request
+float64 execution_time  # Time taken to execute the request
+```
+
+### Publisher Node with Custom Message
+
+```python
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+from builtin_interfaces.msg import Time
+from example_interfaces.msg import Float64
+from sensor_msgs.msg import LaserScan
+import random
+import time
+
+class SensorNode(Node):
+    def __init__(self):
+        super().__init__('sensor_node')
+
+        # Publisher for sensor data with QoS configuration
+        qos_profile = rclpy.qos.QoSProfile(
+            depth=10,
+            reliability=rclpy.qos.ReliabilityPolicy.BEST_EFFORT,
+            durability=rclpy.qos.DurabilityPolicy.VOLATILE
+        )
+
+        self.sensor_pub = self.create_publisher(LaserScan, '/sensors/laser_scan', qos_profile)
+        self.status_pub = self.create_publisher(String, '/sensors/status', 10)
+
+        # Timer for periodic sensor data publishing
+        self.timer = self.create_timer(0.1, self.publish_sensor_data)  # 10 Hz
+
+        self.get_logger().info('Sensor node initialized')
+
+    def publish_sensor_data(self):
+        # Create and populate laser scan message
+        scan_msg = LaserScan()
+        scan_msg.header.stamp = self.get_clock().now().to_msg()
+        scan_msg.header.frame_id = 'laser_frame'
+
+        # Set laser scan parameters
+        scan_msg.angle_min = -1.57  # -90 degrees in radians
+        scan_msg.angle_max = 1.57   # 90 degrees in radians
+        scan_msg.angle_increment = 0.0174  # 1 degree in radians
+        scan_msg.time_increment = 0.0
+        scan_msg.scan_time = 0.1
+        scan_msg.range_min = 0.1
+        scan_msg.range_max = 10.0
+
+        # Generate simulated sensor readings (with some noise)
+        num_readings = int((scan_msg.angle_max - scan_msg.angle_min) / scan_msg.angle_increment)
+        scan_msg.ranges = []
+
+        for i in range(num_readings):
+            # Simulate distance readings with some obstacles
+            angle = scan_msg.angle_min + i * scan_msg.angle_increment
+            # Create a simple environment with a wall at 2m and some obstacles
+            distance = 2.0 + 0.5 * random.random()  # Base distance with noise
+            if 0.5 < abs(angle) < 0.6:  # Simulate an obstacle to the side
+                distance = 0.8 + 0.2 * random.random()
+            scan_msg.ranges.append(distance)
+
+        # Publish sensor data
+        self.sensor_pub.publish(scan_msg)
+
+        # Publish status message
+        status_msg = String()
+        status_msg.data = f'Sensor data published: {len(scan_msg.ranges)} readings'
+        self.status_pub.publish(status_msg)
+
+        self.get_logger().debug(f'Published laser scan with {len(scan_msg.ranges)} readings')
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = SensorNode()
+
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Subscriber Node
+
+```python
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import LaserScan
+from std_msgs.msg import String
+import numpy as np
+
+class ProcessingNode(Node):
+    def __init__(self):
+        super().__init__('processing_node')
+
+        # Subscriber with QoS matching publisher
+        qos_profile = rclpy.qos.QoSProfile(
+            depth=10,
+            reliability=rclpy.qos.ReliabilityPolicy.BEST_EFFORT,
+            durability=rclpy.qos.DurabilityPolicy.VOLATILE
+        )
+
+        self.scan_sub = self.create_subscription(
+            LaserScan,
+            '/sensors/laser_scan',
+            self.scan_callback,
+            qos_profile
+        )
+
+        # Publisher for processed data
+        self.obstacle_pub = self.create_publisher(String, '/processing/obstacles', 10)
+
+        self.get_logger().info('Processing node initialized')
+
+    def scan_callback(self, msg):
+        # Process laser scan data to detect obstacles
+        ranges = np.array(msg.ranges)
+
+        # Filter out invalid readings (inf, nan)
+        valid_ranges = ranges[np.isfinite(ranges)]
+
+        if len(valid_ranges) == 0:
+            self.get_logger().warn('No valid range readings')
+            return
+
+        # Detect obstacles (distances less than 1.0m)
+        obstacle_threshold = 1.0
+        obstacle_indices = np.where(valid_ranges < obstacle_threshold)[0]
+
+        if len(obstacle_indices) > 0:
+            # Calculate angle to closest obstacle
+            closest_obstacle_idx = obstacle_indices[np.argmin(valid_ranges[obstacle_indices])]
+            angle_to_obstacle = msg.angle_min + closest_obstacle_idx * msg.angle_increment
+
+            # Publish obstacle warning
+            obstacle_msg = String()
+            obstacle_msg.data = f'OBSTACLE_DETECTED: distance={valid_ranges[closest_obstacle_idx]:.2f}m, angle={np.degrees(angle_to_obstacle):.2f}deg'
+            self.obstacle_pub.publish(obstacle_msg)
+
+            self.get_logger().info(f'Obstacle detected: {obstacle_msg.data}')
+        else:
+            # Publish clear path message
+            clear_msg = String()
+            clear_msg.data = 'PATH_CLEAR'
+            self.obstacle_pub.publish(clear_msg)
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = ProcessingNode()
+
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Service Server Node
+
+```python
+import rclpy
+from rclpy.node import Node
+from example_interfaces.srv import Trigger
+from std_msgs.msg import String
+import time
+
+class NavigationService(Node):
+    def __init__(self):
+        super().__init__('navigation_service')
+
+        # Create service server
+        self.srv = self.create_service(
+            Trigger,  # Using Trigger service for simplicity
+            '/navigation/check_safety',
+            self.check_safety_callback
+        )
+
+        # Subscribe to obstacle status
+        self.obstacle_sub = self.create_subscription(
+            String,
+            '/processing/obstacles',
+            self.obstacle_status_callback,
+            10
+        )
+
+        self.last_obstacle_status = "PATH_CLEAR"
+        self.get_logger().info('Navigation service initialized')
+
+    def obstacle_status_callback(self, msg):
+        self.last_obstacle_status = msg.data
+
+    def check_safety_callback(self, request, response):
+        # Simulate processing time
+        time.sleep(0.1)
+
+        # Determine safety based on last obstacle status
+        if "OBSTACLE" in self.last_obstacle_status:
+            response.success = False
+            response.message = f'Safety check failed: {self.last_obstacle_status}'
+            self.get_logger().warn(f'Safety check failed: {self.last_obstacle_status}')
+        else:
+            response.success = True
+            response.message = 'Path is safe for navigation'
+            self.get_logger().info('Safety check passed: Path is safe')
+
+        return response
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = NavigationService()
+
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Service Client Node
+
+```python
+import rclpy
+from rclpy.node import Node
+from example_interfaces.srv import Trigger
+from std_msgs.msg import String
+import time
+
+class SafetyMonitor(Node):
+    def __init__(self):
+        super().__init__('safety_monitor')
+
+        # Create service client
+        self.cli = self.create_client(Trigger, '/navigation/check_safety')
+
+        # Wait for service to be available
+        while not self.cli.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('Service not available, waiting again...')
+
+        # Publisher for safety status
+        self.safety_pub = self.create_publisher(String, '/safety/status', 10)
+
+        # Timer to periodically check safety
+        self.timer = self.create_timer(2.0, self.check_safety_periodically)
+
+        self.get_logger().info('Safety monitor initialized')
+
+    def check_safety_periodically(self):
+        # Create and send request
+        request = Trigger.Request()
+
+        # Asynchronously call the service
+        future = self.cli.call_async(request)
+        future.add_done_callback(self.safety_response_callback)
+
+    def safety_response_callback(self, future):
+        try:
+            response = future.result()
+
+            # Publish safety status
+            status_msg = String()
+            status_msg.data = f"SAFETY: {response.success}, {response.message}"
+            self.safety_pub.publish(status_msg)
+
+            if response.success:
+                self.get_logger().info(f'Safety check: {response.message}')
+            else:
+                self.get_logger().warn(f'Safety warning: {response.message}')
+
+        except Exception as e:
+            self.get_logger().error(f'Service call failed: {e}')
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = SafetyMonitor()
+
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+## Practical Lab / Simulation
+
+### Lab Exercise 1: Topic Communication
+
+1. Create a new ROS 2 package called `communication_tutorial`:
+   ```bash
+   cd ~/ros2_ws/src
+   ros2 pkg create --build-type ament_python communication_tutorial
+   ```
+
+2. Implement the sensor node (publisher) and processing node (subscriber) from the examples above
+
+3. Add the necessary dependencies to `setup.py`:
+   ```python
+   # In setup.py
+   package_dir={'': 'communication_tutorial'},
+   packages=find_packages(where='communication_tutorial'),
+   data_files=[
+       ('share/ament_index/resource_index/packages',
+           ['resource/communication_tutorial']),
+       ('share/' + package_name, ['package.xml']),
+   ],
+   install_requires=['setuptools'],
+   zip_safe=True,
+   maintainer='Your Name',
+   maintainer_email='your.email@example.com',
+   description='Communication tutorial package',
+   license='Apache License 2.0',
+   tests_require=['pytest'],
+   entry_points={
+       'console_scripts': [
+           'sensor_node = communication_tutorial.sensor_node:main',
+           'processing_node = communication_tutorial.processing_node:main',
+           'navigation_service = communication_tutorial.navigation_service:main',
+           'safety_monitor = communication_tutorial.safety_monitor:main',
+       ],
+   },
+   ```
+
+4. Build the package:
+   ```bash
+   cd ~/ros2_ws
+   colcon build --packages-select communication_tutorial
+   source install/setup.bash
+   ```
+
+5. Run the publisher and subscriber nodes:
+   ```bash
+   # Terminal 1: Run sensor node
+   ros2 run communication_tutorial sensor_node
+
+   # Terminal 2: Run processing node
+   ros2 run communication_tutorial processing_node
+   ```
+
+6. Monitor the communication using ROS 2 tools:
+   ```bash
+   # View topic statistics
+   ros2 topic hz /sensors/laser_scan
+
+   # Echo messages
+   ros2 topic echo /processing/obstacles
+
+   # View the communication graph
+   rqt_graph
+   ```
+
+### Lab Exercise 2: Service Communication
+
+1. Implement the navigation service (server) and safety monitor (client) from the examples
+
+2. Test the service communication:
+   ```bash
+   # Terminal 1: Run navigation service
+   ros2 run communication_tutorial navigation_service
+
+   # Terminal 2: Run safety monitor
+   ros2 run communication_tutorial safety_monitor
+   ```
+
+3. Test the service manually from command line:
+   ```bash
+   ros2 service call /navigation/check_safety example_interfaces/srv/Trigger
+   ```
+
+### Lab Exercise 3: QoS Policy Experimentation
+
+1. Create two versions of the sensor node with different QoS policies:
+   - One with RELIABLE policy
+   - One with BEST_EFFORT policy
+
+2. Create corresponding subscribers with matching QoS policies
+
+3. Observe the differences in communication behavior under network stress
+
+4. Use `ros2 doctor` to diagnose communication issues
+
+## Real-World Mapping
+
+### Industrial Applications
+- **Factory Automation**: Sensor nodes continuously publish data about production status, while control nodes subscribe to make real-time adjustments
+- **Warehouse Robotics**: Service calls are used for critical operations like requesting lift access or confirming package placement
+- **Quality Control**: Inspection systems publish results to multiple downstream consumers (quality database, production control, alert systems)
+
+### Autonomous Systems
+- **Self-Driving Cars**: LiDAR, radar, and camera nodes publish sensor data to perception systems; path planning services are called when route changes are needed
+- **Drone Systems**: Flight control nodes publish telemetry data; service calls are used for critical operations like emergency landing procedures
+- **Agricultural Robots**: Sensor fusion nodes aggregate data from multiple sensors; service calls coordinate with farm management systems
+
+### Research Platforms
+- **Humanoid Robots**: Multiple sensor nodes (IMU, cameras, force sensors) publish data to central processing nodes; services handle critical operations like balance recovery
+- **Swarm Robotics**: Individual robot nodes publish status information; service calls coordinate group behaviors
+- **Space Robotics**: Communication is designed with appropriate QoS policies to handle variable connection quality
+
+## Summary
+
+Lesson 2 has covered the fundamental communication mechanisms in ROS 2: nodes, topics, and services. We've explored how these components enable modular, scalable robotic systems through practical code examples of sensor publishing, data processing, and service-based communication. The lab exercises provide hands-on experience with creating and connecting these communication patterns, while the QoS policy discussion highlights the importance of appropriate configuration for different application requirements. Understanding these communication patterns is essential for building robust Physical AI systems that can coordinate complex behaviors between distributed components.

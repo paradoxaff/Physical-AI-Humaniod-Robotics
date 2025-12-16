@@ -1,0 +1,1022 @@
+---
+title: Chapter 4 - Isaac Manipulation
+sidebar_label: Isaac Manipulation
+---
+
+# Chapter 4: Isaac Manipulation
+
+## Learning Objectives
+
+By the end of this chapter, you will be able to:
+- Implement GPU-accelerated manipulation algorithms using Isaac Manipulation
+- Integrate perception systems for object detection and pose estimation
+- Configure robotic arms with Isaac's kinematics and dynamics solvers
+- Deploy manipulation systems on NVIDIA hardware platforms
+- Implement advanced manipulation features like grasp planning and force control
+- Validate manipulation performance in simulation and real-world scenarios
+
+## Physical AI Concept
+
+Isaac Manipulation represents NVIDIA's specialized manipulation stack optimized for AI-powered robotic manipulation tasks, leveraging GPU acceleration for real-time grasp planning, trajectory optimization, and force control. For Physical AI systems, manipulation is a fundamental capability that enables robots to interact with objects in the physical world, requiring precise control, real-time perception, and adaptive behavior. Isaac Manipulation provides the computational foundation for dexterous manipulation in complex environments.
+
+Key aspects of Isaac Manipulation in Physical AI:
+- **GPU-Accelerated Planning**: High-performance grasp and trajectory planning algorithms
+- **Perception Integration**: Tight coupling with vision systems for object recognition and pose estimation
+- **Real-time Control**: Optimized for deterministic, low-latency manipulation
+- **Force Control**: Advanced algorithms for compliant manipulation and interaction
+- **Multi-fingered Grasping**: Support for complex end-effectors and dexterous manipulation
+
+## System Architecture
+
+### Isaac Manipulation Architecture
+
+```
+Isaac Manipulation Architecture:
+┌─────────────────────────────────────────────────────────────────────┐
+│                    Application Layer                                │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐    │
+│  │   High-Level    │  │   Grasp         │  │   Task          │    │
+│  │   Commands      │  │   Planning      │  │   Execution     │    │
+│  │  • Pick & Place │  │  • Grasp       │  │  • Sequential   │    │
+│  │  • Assembly     │  │    Synthesis    │  │    Operations   │    │
+│  │  • Tool Use     │  │  • Force       │  │  • Error        │    │
+│  │  • Human-Robot  │  │    Optimization │  │    Recovery     │    │
+│  │    Interaction  │  │  • Multi-Object │  │  • Skill        │    │
+│  └─────────────────┘  └─────────────────┘  │    Libraries    │    │
+│              │                    │         └─────────────────┘    │
+│              ▼                    ▼                    │           │
+│  ┌─────────────────────────────────────────────────────▼─────────┐ │
+│  │                  Isaac Manipulation Core                      │ │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │ │
+│  │  │  Inverse    │  │  Forward    │  │  Trajectory         │  │ │
+│  │  │  Kinematics │  │  Kinematics │  │  Optimization       │  │ │
+│  │  │  • Analytical│  │  • Joint    │  │  • Time Optimal    │  │ │
+│  │  │  • Numerical │  │    Simulation│  │  • Energy Efficient│  │ │
+│  │  │  • Redundant │  │  • Dynamics │  │  • Collision-Free  │  │ │
+│  │  └─────────────┘  └─────────────┘  │  • Smooth Motion   │  │ │
+│  └─────────────────────────────────────└─────────────────────┘──┘ │
+│                                     │                            │
+│                                     ▼                            │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │              GPU Computing Layer                            │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │  │
+│  │  │   CUDA      │  │   TensorRT  │  │   cuDNN     │        │  │
+│  │  │   Core      │  │   Inference │  │   Deep      │        │  │
+│  │  │  • Parallel │  │  • Model    │  │    Learning │        │  │
+│  │  │    Processing│ │    Optimization││    Primitives│       │  │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘        │  │
+│  └─────────────────────────────────────────────────────────────┘  │
+│                                     │                            │
+│                                     ▼                            │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │              Perception & Control                           │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │  │
+│  │  │  Object     │  │  Pose        │  │  Force/     │        │  │
+│  │  │  Detection  │  │  Estimation  │  │  Torque     │        │  │
+│  │  │  • YOLO     │  │  • PnP       │  │  Control    │        │  │
+│  │  │  • Segmentation││  • ICP      │  │  • Impedance │        │  │
+│  │  │  • Tracking │  │  • Filtering │  │  • Admittance│        │  │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘        │  │
+│  └─────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Isaac Manipulation Planning Pipeline
+
+```
+Manipulation Planning Pipeline:
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Perception    │───▶│  Object         │───▶│  Grasp          │
+│   Input         │    │  Segmentation   │    │  Planning      │
+│  • RGB-D        │    │  • Instance    │    │  • Feasibility  │
+│    Images       │    │    Segmentation │    │  • Quality     │
+│  • Point Cloud  │    │  • Pose        │    │  • Force       │
+│    Data         │    │    Estimation   │    │    Optimization │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         ▼                       ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Scene         │───▶│  Inverse        │───▶│  Trajectory     │
+│   Understanding │    │  Kinematics     │    │  Generation     │
+│  • Object      │    │  • Analytical   │    │  • Joint Space  │
+│    Properties   │    │  • Numerical    │    │  • Cartesian   │
+│  • Environment │    │  • Redundancy   │    │    Space        │
+│    Constraints │    │  • Collision    │    │  • Time         │
+└─────────────────┘    │    Avoidance    │    │    Optimization │
+         │               └─────────────────┘    └─────────────────┘
+         ▼                       │                       │
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Motion        │───▶│  Control        │───▶│  Execution      │
+│   Planning      │    │  Interface      │    │  Validation     │
+│  • Path         │    │  • PID          │    │  • Success      │
+│    Smoothing    │    │  • Impedance    │    │  • Failure      │
+│  • Collision    │    │  • Force        │    │  • Recovery     │
+│    Checking     │    │  • Trajectory   │    │    Planning     │
+└─────────────────┘    │    Following    │    └─────────────────┘
+                       └─────────────────┘
+```
+
+## Tools & Software
+
+This chapter uses:
+- **Isaac ROS Manipulation** - GPU-accelerated manipulation stack
+- **Isaac ROS Perception** - Object detection and pose estimation
+- **MoveIt2** - Motion planning framework (Isaac integration)
+- **CUDA & TensorRT** - GPU computing and AI acceleration
+- **NVIDIA Jetson** - Edge AI computing platforms for manipulation
+- **URDF/URDF++** - Robot description format
+- **ROS 2 Control** - Hardware interface and control framework
+- **Franka Control** - Specialized controllers (optional integration)
+
+## Code / Configuration Examples
+
+### Isaac Manipulation Core Node
+```python
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import JointState, Image, CameraInfo
+from geometry_msgs.msg import Pose, Point, Quaternion
+from std_msgs.msg import Float64MultiArray
+from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
+from builtin_interfaces.msg import Duration
+from vision_msgs.msg import Detection3DArray
+import numpy as np
+import math
+from scipy.spatial.transform import Rotation as R
+from cv_bridge import CvBridge
+import tf2_ros
+from tf2_ros import TransformException
+from tf2_ros.buffer import Buffer
+from tf2_ros.transform_listener import TransformListener
+
+class IsaacManipulationNode(Node):
+    def __init__(self):
+        super().__init__('isaac_manipulation_node')
+
+        # TF2 setup for coordinate transformations
+        self.tf_buffer = Buffer()
+        self.tf_listener = TransformListener(self.tf_buffer, self)
+
+        # Initialize CV bridge
+        self.bridge = CvBridge()
+
+        # Publishers and subscribers
+        self.joint_state_sub = self.create_subscription(
+            JointState, '/joint_states', self.joint_state_callback, 10
+        )
+        self.object_detections_sub = self.create_subscription(
+            Detection3DArray, '/object_detections_3d', self.detections_callback, 10
+        )
+        self.joint_traj_pub = self.create_publisher(
+            JointTrajectory, '/joint_trajectory_controller/joint_trajectory', 10
+        )
+        self.gripper_cmd_pub = self.create_publisher(
+            Float64MultiArray, '/gripper_controller/commands', 10
+        )
+
+        # Manipulation state
+        self.current_joint_positions = {}
+        self.current_joint_velocities = {}
+        self.target_object = None
+        self.manipulation_active = False
+        self.robot_base_frame = 'base_link'
+        self.ee_frame = 'end_effector'
+
+        # Robot parameters (7-DOF arm example)
+        self.joint_names = [
+            'joint_1', 'joint_2', 'joint_3', 'joint_4',
+            'joint_5', 'joint_6', 'joint_7'
+        ]
+        self.joint_limits = {
+            'min': [-2.967, -1.832, -2.967, -3.141, -2.967, -0.087, -2.967],
+            'max': [2.967, 1.832, 2.967, 0.0, 2.967, 3.752, 2.967]
+        }
+
+        # Manipulation parameters
+        self.approach_distance = 0.1  # meters
+        self.grasp_distance = 0.05    # meters
+        self.lift_distance = 0.1      # meters
+        self.retract_distance = 0.15  # meters
+
+        # Kinematics solver (simplified - in practice use MoveIt or custom IK)
+        self.kinematics_solver = self.SimpleKinematicsSolver()
+
+        # Timer for manipulation control
+        self.manip_timer = self.create_timer(0.1, self.manipulation_control)
+
+        self.get_logger().info('Isaac manipulation node initialized')
+
+    def joint_state_callback(self, msg):
+        """Update current joint positions and velocities"""
+        for i, name in enumerate(msg.name):
+            if i < len(msg.position):
+                self.current_joint_positions[name] = msg.position[i]
+            if i < len(msg.velocity):
+                self.current_joint_velocities[name] = msg.velocity[i]
+
+    def detections_callback(self, msg):
+        """Process 3D object detections for manipulation"""
+        if len(msg.detections) > 0:
+            # Select the closest object for manipulation
+            closest_detection = min(
+                msg.detections,
+                key=lambda d: math.sqrt(
+                    d.results[0].pose.pose.position.x**2 +
+                    d.results[0].pose.pose.position.y**2 +
+                    d.results[0].pose.pose.position.z**2
+                )
+            )
+            self.target_object = closest_detection
+            self.get_logger().info(f'Found target object: {closest_detection.results[0].hypothesis.class_id}')
+
+    def manipulation_control(self):
+        """Main manipulation control loop"""
+        if not self.target_object or not self.manipulation_active:
+            return
+
+        # Get object pose in robot base frame
+        object_pose = self.target_object.results[0].pose.pose
+        object_position = np.array([
+            object_pose.position.x,
+            object_pose.position.y,
+            object_pose.position.z
+        ])
+
+        # Plan manipulation sequence
+        approach_pose = self.calculate_approach_pose(object_position)
+        grasp_pose = self.calculate_grasp_pose(object_position)
+        lift_pose = self.calculate_lift_pose(object_position)
+
+        # Execute manipulation sequence
+        if not self.is_executing():
+            self.execute_approach(approach_pose)
+        elif self.is_at_pose(approach_pose):
+            self.execute_grasp(grasp_pose)
+        elif self.is_at_pose(grasp_pose):
+            self.execute_lift(lift_pose)
+        elif self.is_at_pose(lift_pose):
+            self.manipulation_active = False
+            self.get_logger().info('Manipulation sequence completed')
+
+    def calculate_approach_pose(self, object_position):
+        """Calculate approach pose before grasping"""
+        # Approach from above with safe distance
+        approach_pos = object_position.copy()
+        approach_pos[2] += self.approach_distance  # Approach from above
+        return self.create_pose(approach_pos, [0, 0, 0, 1])  # Simple orientation
+
+    def calculate_grasp_pose(self, object_position):
+        """Calculate grasp pose for object"""
+        # Grasp at object position with appropriate orientation
+        grasp_pos = object_position.copy()
+        grasp_pos[2] += self.grasp_distance  # Adjust for gripper offset
+        return self.create_pose(grasp_pos, [0, 0, 0, 1])  # Simple orientation
+
+    def calculate_lift_pose(self, object_position):
+        """Calculate lift pose after grasping"""
+        # Lift object to safe height
+        lift_pos = object_position.copy()
+        lift_pos[2] += self.lift_distance
+        return self.create_pose(lift_pos, [0, 0, 0, 1])  # Simple orientation
+
+    def create_pose(self, position, orientation):
+        """Create pose message from position and orientation"""
+        pose = Pose()
+        pose.position.x = float(position[0])
+        pose.position.y = float(position[1])
+        pose.position.z = float(position[2])
+        pose.orientation.x = float(orientation[0])
+        pose.orientation.y = float(orientation[1])
+        pose.orientation.z = float(orientation[2])
+        pose.orientation.w = float(orientation[3])
+        return pose
+
+    def execute_approach(self, pose):
+        """Execute approach motion"""
+        joint_positions = self.inverse_kinematics(pose)
+        if joint_positions is not None:
+            self.move_to_joint_positions(joint_positions)
+            self.get_logger().info('Executing approach motion')
+
+    def execute_grasp(self, pose):
+        """Execute grasp motion and close gripper"""
+        joint_positions = self.inverse_kinematics(pose)
+        if joint_positions is not None:
+            self.move_to_joint_positions(joint_positions)
+            self.close_gripper()
+            self.get_logger().info('Executing grasp motion')
+
+    def execute_lift(self, pose):
+        """Execute lift motion"""
+        joint_positions = self.inverse_kinematics(pose)
+        if joint_positions is not None:
+            self.move_to_joint_positions(joint_positions)
+            self.get_logger().info('Executing lift motion')
+
+    def inverse_kinematics(self, pose):
+        """Calculate inverse kinematics for desired end-effector pose"""
+        # In a real implementation, this would use MoveIt or a custom IK solver
+        # For this example, we'll use a simplified approach
+
+        # Get current joint positions as initial guess
+        current_positions = []
+        for joint_name in self.joint_names:
+            if joint_name in self.current_joint_positions:
+                current_positions.append(self.current_joint_positions[joint_name])
+            else:
+                current_positions.append(0.0)  # Default position
+
+        # This is a simplified IK solution - real implementation would be more complex
+        # For demonstration, we'll return current positions (no change)
+        # In practice, use MoveIt2 or a proper IK solver
+        return current_positions
+
+    def move_to_joint_positions(self, joint_positions):
+        """Execute joint trajectory to reach target positions"""
+        traj_msg = JointTrajectory()
+        traj_msg.joint_names = self.joint_names
+
+        point = JointTrajectoryPoint()
+        point.positions = joint_positions
+        point.velocities = [0.0] * len(joint_positions)  # Start and end with zero velocity
+        point.accelerations = [0.0] * len(joint_positions)
+        point.time_from_start = Duration(sec=3, nanosec=0)  # 3 seconds to reach target
+
+        traj_msg.points.append(point)
+
+        self.joint_traj_pub.publish(traj_msg)
+
+    def close_gripper(self):
+        """Close the gripper"""
+        cmd_msg = Float64MultiArray()
+        cmd_msg.data = [0.0]  # Close gripper (adjust based on your gripper's command format)
+        self.gripper_cmd_pub.publish(cmd_msg)
+
+    def is_at_pose(self, target_pose, tolerance=0.02):
+        """Check if end-effector is at target pose"""
+        # In a real implementation, this would get current EE pose using FK
+        # For this example, we'll assume we reach the target after some time
+        return False  # Placeholder - implement actual pose checking
+
+    def is_executing(self):
+        """Check if trajectory is currently executing"""
+        # In a real implementation, this would check trajectory execution status
+        return False  # Placeholder - implement actual execution status checking
+
+    class SimpleKinematicsSolver:
+        """Simple kinematics solver for demonstration"""
+        def __init__(self):
+            # Robot parameters would be defined here
+            pass
+
+        def forward_kinematics(self, joint_angles):
+            """Calculate end-effector pose from joint angles"""
+            # Simplified implementation
+            pass
+
+        def inverse_kinematics(self, target_pose, current_joints):
+            """Calculate joint angles for target pose"""
+            # Simplified implementation
+            pass
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = IsaacManipulationNode()
+
+    try:
+        # Example: Start manipulation when target object is detected
+        node.manipulation_active = True
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Isaac Perception Integration for Manipulation
+```python
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import Image, CameraInfo, PointCloud2
+from vision_msgs.msg import Detection2DArray, Detection3DArray, Detection3D
+from geometry_msgs.msg import Point, Pose, Vector3
+from std_msgs.msg import Header
+from cv_bridge import CvBridge
+import numpy as np
+import cv2
+from scipy.spatial.transform import Rotation as R
+import open3d as o3d
+
+class IsaacPerceptionManipulationNode(Node):
+    def __init__(self):
+        super().__init__('isaac_perception_manipulation_node')
+
+        # Initialize CV bridge
+        self.bridge = CvBridge()
+
+        # Publishers and subscribers
+        self.color_image_sub = self.create_subscription(
+            Image, '/camera/rgb/image_rect_color', self.color_image_callback, 10
+        )
+        self.depth_image_sub = self.create_subscription(
+            Image, '/camera/depth/image_rect_raw', self.depth_image_callback, 10
+        )
+        self.camera_info_sub = self.create_subscription(
+            CameraInfo, '/camera/rgb/camera_info', self.camera_info_callback, 10
+        )
+        self.detections_3d_pub = self.create_publisher(
+            Detection3DArray, '/object_detections_3d', 10
+        )
+        self.segmented_pub = self.create_publisher(
+            Image, '/segmented_objects', 10
+        )
+
+        # Camera parameters
+        self.camera_matrix = None
+        self.distortion_coeffs = None
+        self.depth_image = None
+        self.color_image = None
+
+        # Object detection model
+        self.load_detection_model()
+
+        # Timer for processing
+        self.process_timer = self.create_timer(0.5, self.process_images)  # 2 Hz
+
+        self.get_logger().info('Isaac perception manipulation node initialized')
+
+    def camera_info_callback(self, msg):
+        """Process camera calibration information"""
+        self.camera_matrix = np.array(msg.k).reshape(3, 3)
+        self.distortion_coeffs = np.array(msg.d)
+
+    def color_image_callback(self, msg):
+        """Process color image for object detection"""
+        try:
+            self.color_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='rgb8')
+        except Exception as e:
+            self.get_logger().error(f'Error processing color image: {e}')
+
+    def depth_image_callback(self, msg):
+        """Process depth image for 3D object localization"""
+        try:
+            # Convert depth image (assuming 32-bit float format)
+            self.depth_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='32FC1')
+        except Exception as e:
+            self.get_logger().error(f'Error processing depth image: {e}')
+
+    def load_detection_model(self):
+        """Load object detection model"""
+        try:
+            # For this example, we'll use OpenCV's DNN module
+            # In a real Isaac implementation, this would use TensorRT-optimized models
+            self.detection_model = cv2.dnn.readNetFromONNX('yolov5s.onnx')  # Placeholder
+            self.get_logger().info('Detection model loaded')
+        except Exception as e:
+            self.get_logger().warn(f'Could not load detection model: {e}')
+            self.detection_model = None
+
+    def process_images(self):
+        """Process color and depth images for 3D object detection"""
+        if self.color_image is None or self.depth_image is None or self.camera_matrix is None:
+            return
+
+        try:
+            # Run 2D object detection
+            detections_2d = self.run_2d_detection(self.color_image)
+
+            # Convert 2D detections to 3D
+            detections_3d = self.convert_2d_to_3d(detections_2d)
+
+            # Publish 3D detections
+            self.publish_3d_detections(detections_3d)
+
+            # Publish segmented image for visualization
+            segmented_img = self.draw_detections(self.color_image, detections_2d)
+            segmented_ros_img = self.bridge.cv2_to_imgmsg(segmented_img, encoding='rgb8')
+            segmented_ros_img.header.stamp = self.get_clock().now().to_msg()
+            segmented_ros_img.header.frame_id = 'camera_rgb_optical_frame'
+            self.segmented_pub.publish(segmented_ros_img)
+
+        except Exception as e:
+            self.get_logger().error(f'Error in image processing: {e}')
+
+    def run_2d_detection(self, image):
+        """Run 2D object detection on image"""
+        if self.detection_model is None:
+            # Use OpenCV's built-in detector as fallback
+            # In practice, use Isaac's optimized perception pipeline
+            gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+            # Simple blob detection as placeholder
+            detector = cv2.SimpleBlobDetector_create()
+            keypoints = detector.detect(gray)
+            detections = []
+            for kp in keypoints:
+                detection = {
+                    'bbox': [int(kp.pt[0] - 10), int(kp.pt[1] - 10), int(kp.pt[0] + 10), int(kp.pt[1] + 10)],
+                    'confidence': 0.7,
+                    'class_id': 0,
+                    'class_name': 'object'
+                }
+                detections.append(detection)
+            return detections
+
+        # For this example, return some dummy detections
+        h, w = image.shape[:2]
+        return [
+            {
+                'bbox': [w//2 - 25, h//2 - 25, w//2 + 25, h//2 + 25],
+                'confidence': 0.9,
+                'class_id': 1,
+                'class_name': 'target_object'
+            }
+        ]
+
+    def convert_2d_to_3d(self, detections_2d):
+        """Convert 2D detections to 3D poses using depth information"""
+        detections_3d = []
+
+        for detection in detections_2d:
+            bbox = detection['bbox']
+            x1, y1, x2, y2 = bbox
+
+            # Calculate center of bounding box
+            center_x = int((x1 + x2) / 2)
+            center_y = int((y1 + y2) / 2)
+
+            # Get depth at center point (with some averaging for noise reduction)
+            roi_depth = self.depth_image[center_y-5:center_y+5, center_x-5:center_x+5]
+            valid_depths = roi_depth[np.isfinite(roi_depth)]
+
+            if len(valid_depths) > 0:
+                avg_depth = np.mean(valid_depths)
+
+                # Convert pixel coordinates to 3D world coordinates
+                if avg_depth > 0:
+                    # Use camera intrinsics to convert to 3D
+                    z = avg_depth  # Depth in meters
+                    x = (center_x - self.camera_matrix[0, 2]) * z / self.camera_matrix[0, 0]
+                    y = (center_y - self.camera_matrix[1, 2]) * z / self.camera_matrix[1, 1]
+
+                    detection_3d = Detection3D()
+                    detection_3d.header.stamp = self.get_clock().now().to_msg()
+                    detection_3d.header.frame_id = 'camera_rgb_optical_frame'
+
+                    # Set pose
+                    detection_3d.pose.position.x = float(x)
+                    detection_3d.pose.position.y = float(y)
+                    detection_3d.pose.position.z = float(z)
+
+                    # Set orientation (identity for now)
+                    detection_3d.pose.orientation.w = 1.0
+
+                    # Set size (estimated)
+                    detection_3d.bbox.size.x = float((x2 - x1) * z / self.camera_matrix[0, 0])
+                    detection_3d.bbox.size.y = float((y2 - y1) * z / self.camera_matrix[1, 1])
+                    detection_3d.bbox.size.z = 0.1  # Estimated depth
+
+                    # Set hypothesis
+                    detection_3d.results = []
+                    # Add hypothesis result here (simplified)
+
+                    detections_3d.append(detection_3d)
+
+        return detections_3d
+
+    def publish_3d_detections(self, detections_3d):
+        """Publish 3D object detections"""
+        detection_array = Detection3DArray()
+        detection_array.header.stamp = self.get_clock().now().to_msg()
+        detection_array.header.frame_id = 'camera_rgb_optical_frame'
+        detection_array.detections = detections_3d
+
+        self.detections_3d_pub.publish(detection_array)
+
+    def draw_detections(self, image, detections):
+        """Draw detection bounding boxes on image"""
+        output_img = image.copy()
+
+        for detection in detections:
+            bbox = detection['bbox']
+            x1, y1, x2, y2 = bbox
+            cv2.rectangle(output_img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            cv2.putText(
+                output_img,
+                f"{detection['class_name']}: {detection['confidence']:.2f}",
+                (x1, y1 - 10),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.5,
+                (0, 255, 0),
+                1
+            )
+
+        return output_img
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = IsaacPerceptionManipulationNode()
+
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Isaac Grasp Planning Node
+```python
+import rclpy
+from rclpy.node import Node
+from geometry_msgs.msg import Pose, Point, Vector3
+from sensor_msgs.msg import PointCloud2
+from std_msgs.msg import Float64MultiArray
+from visualization_msgs.msg import Marker, MarkerArray
+from builtin_interfaces.msg import Duration
+import numpy as np
+import math
+from scipy.spatial import distance
+from scipy.spatial.transform import Rotation as R
+
+class IsaacGraspPlanningNode(Node):
+    def __init__(self):
+        super().__init__('isaac_grasp_planning_node')
+
+        # Publishers and subscribers
+        self.pointcloud_sub = self.create_subscription(
+            PointCloud2, '/camera/depth/points', self.pointcloud_callback, 10
+        )
+        self.grasp_poses_pub = self.create_publisher(
+            MarkerArray, '/grasp_poses', 10
+        )
+        self.best_grasp_pub = self.create_publisher(
+            Pose, '/best_grasp_pose', 10
+        )
+
+        # Point cloud data
+        self.pointcloud_data = None
+
+        # Grasp planning parameters
+        self.grasp_approach_distance = 0.1  # meters
+        self.grasp_depth = 0.05  # meters
+        self.gripper_width = 0.08  # meters
+        self.min_contact_points = 5  # minimum points for valid grasp
+        self.grasp_quality_threshold = 0.5  # minimum quality score
+
+        # Timer for grasp planning
+        self.grasp_timer = self.create_timer(1.0, self.plan_grasps)
+
+        self.get_logger().info('Isaac grasp planning node initialized')
+
+    def pointcloud_callback(self, msg):
+        """Process point cloud data for grasp planning"""
+        # Convert PointCloud2 to numpy array (simplified)
+        # In practice, use a proper conversion function
+        self.pointcloud_data = self.pointcloud2_to_array(msg)
+
+    def pointcloud2_to_array(self, cloud_msg):
+        """Convert PointCloud2 message to numpy array"""
+        # This is a simplified conversion
+        # In practice, use sensor_msgs.point_cloud2
+        import sensor_msgs.point_cloud2 as pc2
+        points = []
+        for point in pc2.read_points(cloud_msg, field_names=("x", "y", "z"), skip_nans=True):
+            points.append([point[0], point[1], point[2]])
+        return np.array(points)
+
+    def plan_grasps(self):
+        """Plan potential grasp poses for objects in point cloud"""
+        if self.pointcloud_data is None or len(self.pointcloud_data) == 0:
+            return
+
+        # Find potential grasp points
+        grasp_candidates = self.generate_grasp_candidates(self.pointcloud_data)
+
+        # Evaluate grasp quality
+        valid_grasps = []
+        for candidate in grasp_candidates:
+            quality = self.evaluate_grasp_quality(candidate, self.pointcloud_data)
+            if quality > self.grasp_quality_threshold:
+                candidate['quality'] = quality
+                valid_grasps.append(candidate)
+
+        # Sort by quality
+        valid_grasps.sort(key=lambda x: x['quality'], reverse=True)
+
+        # Publish visualization markers
+        self.publish_grasp_markers(valid_grasps)
+
+        # Publish best grasp
+        if valid_grasps:
+            best_grasp = valid_grasps[0]
+            self.publish_best_grasp(best_grasp)
+
+    def generate_grasp_candidates(self, points):
+        """Generate potential grasp poses from point cloud"""
+        candidates = []
+
+        # For each point, consider it as a potential grasp center
+        # In practice, this would use more sophisticated methods
+        for i, point in enumerate(points):
+            if i % 20 == 0:  # Sample every 20th point for efficiency
+                # Generate multiple grasp orientations
+                for angle in np.linspace(0, 2*np.pi, 8):  # 8 orientations
+                    candidate = {
+                        'position': point,
+                        'orientation': self.calculate_grasp_orientation(point, points, angle),
+                        'quality': 0.0
+                    }
+                    candidates.append(candidate)
+
+        return candidates
+
+    def calculate_grasp_orientation(self, grasp_point, all_points, angle):
+        """Calculate grasp orientation based on local surface normal"""
+        # Find neighboring points
+        neighbor_indices = np.where(
+            np.linalg.norm(all_points - grasp_point, axis=1) < 0.05  # 5cm radius
+        )[0]
+
+        if len(neighbor_indices) < 3:
+            # Default orientation if not enough neighbors
+            return [0, 0, 0, 1]  # Identity quaternion
+
+        # Calculate surface normal using PCA
+        neighbor_points = all_points[neighbor_indices]
+        centered_points = neighbor_points - grasp_point
+        cov_matrix = np.cov(centered_points.T)
+        eigenvalues, eigenvectors = np.linalg.eigh(cov_matrix)
+
+        # The eigenvector corresponding to the smallest eigenvalue is the normal
+        normal = eigenvectors[:, 0]
+
+        # Calculate approach direction (perpendicular to normal)
+        approach_dir = np.array([math.cos(angle), math.sin(angle), 0])
+
+        # Make sure approach is perpendicular to surface normal
+        approach_dir = approach_dir - np.dot(approach_dir, normal) * normal
+        approach_dir = approach_dir / np.linalg.norm(approach_dir)
+
+        # Calculate gripper orientation
+        # For parallel jaw gripper, the gripper axis should be perpendicular to approach
+        gripper_axis = np.cross(approach_dir, normal)
+        gripper_axis = gripper_axis / np.linalg.norm(gripper_axis)
+
+        # Create rotation matrix
+        z_axis = approach_dir  # Approach direction
+        y_axis = gripper_axis  # Gripper opening direction
+        x_axis = np.cross(y_axis, z_axis)  # Complete the coordinate system
+
+        rotation_matrix = np.column_stack([x_axis, y_axis, z_axis])
+
+        # Convert to quaternion
+        r = R.from_matrix(rotation_matrix)
+        quat = r.as_quat()  # Returns [x, y, z, w]
+
+        return quat.tolist()
+
+    def evaluate_grasp_quality(self, grasp_candidate, points):
+        """Evaluate the quality of a grasp candidate"""
+        pos = grasp_candidate['position']
+        quat = grasp_candidate['orientation']
+
+        # Convert quaternion to rotation matrix
+        r = R.from_quat(quat)
+        rotation_matrix = r.as_matrix()
+
+        # Define gripper approach and opening directions
+        approach_dir = rotation_matrix[:, 2]  # Z-axis is approach direction
+        gripper_dir = rotation_matrix[:, 1]   # Y-axis is gripper opening direction
+
+        # Check if there are sufficient contact points for a stable grasp
+        contact_points = self.find_contact_points(pos, approach_dir, gripper_dir, points)
+
+        # Calculate grasp quality based on contact points
+        quality = self.calculate_contact_quality(contact_points)
+
+        return quality
+
+    def find_contact_points(self, grasp_pos, approach_dir, gripper_dir, points):
+        """Find contact points for the proposed grasp"""
+        # Define grasp region (simplified model)
+        grasp_region = []
+
+        # Sample points along the gripper approach direction
+        for depth in np.linspace(-self.grasp_depth/2, self.grasp_depth/2, 5):
+            sample_pos = grasp_pos + approach_dir * depth
+
+            # Find points within gripper width
+            for point in points:
+                # Project point onto gripper plane
+                to_point = point - sample_pos
+                projected = to_point - np.dot(to_point, approach_dir) * approach_dir
+
+                # Check if within gripper width
+                if np.linalg.norm(projected) < self.gripper_width/2:
+                    grasp_region.append(point)
+
+        return np.array(grasp_region)
+
+    def calculate_contact_quality(self, contact_points):
+        """Calculate grasp quality based on contact points"""
+        if len(contact_points) < self.min_contact_points:
+            return 0.0
+
+        # Calculate quality based on contact distribution
+        if len(contact_points) < 2:
+            return 0.1
+
+        # Calculate the spread of contact points
+        centroid = np.mean(contact_points, axis=0)
+        distances = np.linalg.norm(contact_points - centroid, axis=1)
+        avg_distance = np.mean(distances)
+
+        # Quality increases with better contact distribution
+        quality = min(1.0, avg_distance * 2.0)  # Scale factor is adjustable
+
+        return quality
+
+    def publish_grasp_markers(self, grasps):
+        """Publish grasp poses as visualization markers"""
+        marker_array = MarkerArray()
+
+        # Clear old markers
+        clear_marker = Marker()
+        clear_marker.header.frame_id = 'camera_rgb_optical_frame'
+        clear_marker.header.stamp = self.get_clock().now().to_msg()
+        clear_marker.ns = 'grasps'
+        clear_marker.id = 0
+        clear_marker.action = Marker.DELETEALL
+        marker_array.markers.append(clear_marker)
+
+        # Add grasp markers
+        for i, grasp in enumerate(grasps[:10]):  # Limit to top 10 grasps
+            # Grasp approach direction marker
+            marker = Marker()
+            marker.header.frame_id = 'camera_rgb_optical_frame'
+            marker.header.stamp = self.get_clock().now().to_msg()
+            marker.ns = 'grasps'
+            marker.id = i * 2 + 1
+            marker.type = Marker.ARROW
+            marker.action = Marker.ADD
+
+            # Set start and end points for arrow
+            start_point = Point()
+            start_point.x = float(grasp['position'][0])
+            start_point.y = float(grasp['position'][1])
+            start_point.z = float(grasp['position'][2])
+
+            # Calculate end point based on approach direction
+            quat = grasp['orientation']
+            r = R.from_quat(quat)
+            approach_dir = r.as_matrix()[:, 2]  # Z-axis is approach direction
+            end_point = Point()
+            end_point.x = start_point.x + float(approach_dir[0] * 0.05)  # 5cm arrow
+            end_point.y = start_point.y + float(approach_dir[1] * 0.05)
+            end_point.z = start_point.z + float(approach_dir[2] * 0.05)
+
+            marker.points = [start_point, end_point]
+            marker.scale.x = 0.005  # Shaft diameter
+            marker.scale.y = 0.01   # Head diameter
+            marker.color.r = 1.0
+            marker.color.g = float(grasp['quality'])  # Green intensity = quality
+            marker.color.b = 0.0
+            marker.color.a = 0.8
+
+            marker_array.markers.append(marker)
+
+            # Quality text marker
+            text_marker = Marker()
+            text_marker.header.frame_id = 'camera_rgb_optical_frame'
+            text_marker.header.stamp = self.get_clock().now().to_msg()
+            text_marker.ns = 'grasp_quality'
+            text_marker.id = i * 2 + 2
+            text_marker.type = Marker.TEXT_VIEW_FACING
+            text_marker.action = Marker.ADD
+
+            text_marker.pose.position.x = start_point.x
+            text_marker.pose.position.y = start_point.y
+            text_marker.pose.position.z = start_point.z + 0.05  # Above the arrow
+            text_marker.pose.orientation.w = 1.0
+
+            text_marker.text = f"Q: {grasp['quality']:.2f}"
+            text_marker.scale.z = 0.02
+            text_marker.color.r = 1.0
+            text_marker.color.g = 1.0
+            text_marker.color.b = 1.0
+            text_marker.color.a = 0.8
+
+            marker_array.markers.append(text_marker)
+
+        self.grasp_poses_pub.publish(marker_array)
+
+    def publish_best_grasp(self, grasp):
+        """Publish the best grasp pose"""
+        pose_msg = Pose()
+        pose_msg.position.x = float(grasp['position'][0])
+        pose_msg.position.y = float(grasp['position'][1])
+        pose_msg.position.z = float(grasp['position'][2])
+
+        pose_msg.orientation.x = float(grasp['orientation'][0])
+        pose_msg.orientation.y = float(grasp['orientation'][1])
+        pose_msg.orientation.z = float(grasp['orientation'][2])
+        pose_msg.orientation.w = float(grasp['orientation'][3])
+
+        self.best_grasp_pub.publish(pose_msg)
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = IsaacGraspPlanningNode()
+
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+## Practical Lab / Simulation
+
+### Lab Exercise 1: Isaac Manipulation Installation and Setup
+
+1. Install Isaac ROS Manipulation packages
+2. Set up manipulator robot (real or simulated)
+3. Configure robot URDF and kinematics
+4. Test basic joint control and feedback
+5. Verify proper integration with perception systems
+
+### Lab Exercise 2: Perception-Action Integration
+
+1. Implement the Isaac perception manipulation node
+2. Test 2D object detection with RGB images
+3. Integrate depth information for 3D localization
+4. Validate object pose estimation accuracy
+5. Evaluate system performance in different lighting conditions
+
+### Lab Exercise 3: Grasp Planning
+
+1. Implement the Isaac grasp planning node
+2. Test with various object shapes and sizes
+3. Evaluate grasp quality metrics
+4. Optimize parameters for different gripper types
+5. Validate planned grasps in simulation
+
+### Lab Exercise 4: Manipulation Execution
+
+1. Implement the Isaac manipulation core node
+2. Test pick-and-place operations with detected objects
+3. Evaluate grasp success rate and execution time
+4. Test with multiple objects and different scenarios
+5. Implement error recovery behaviors
+
+### Lab Exercise 5: Performance Optimization
+
+1. Profile manipulation nodes for computational bottlenecks
+2. Optimize algorithms for real-time performance
+3. Test manipulation on different NVIDIA hardware platforms
+4. Evaluate power consumption vs. performance trade-offs
+5. Document optimal configurations for different scenarios
+
+### Lab Exercise 6: Real-world Validation
+
+1. Deploy manipulation system on physical robot
+2. Test manipulation performance in real environments
+3. Compare simulation vs. reality performance
+4. Identify and address reality gap issues
+5. Validate safety and reliability in real scenarios
+
+## Real-World Mapping
+
+### Industrial Applications
+- **Manufacturing**: Isaac Manipulation for assembly and quality inspection
+- **Logistics**: Picking and packing systems for warehouses
+- **Agriculture**: Harvesting and sorting robotic systems
+
+### Research Applications
+- **Humanoid Robotics**: Dextrous manipulation for human-like robots
+- **Service Robotics**: Object manipulation in human environments
+- **Space Robotics**: Manipulation systems for space missions
+
+### Key Success Factors
+- **GPU Acceleration**: Leveraging CUDA for real-time grasp planning
+- **Perception Integration**: Tight coupling with vision systems for robust manipulation
+- **Safety**: Ensuring safe operation around humans and objects
+- **Reliability**: Consistent performance with various object types
+- **Adaptability**: Handling novel objects and environments
+
+## Summary
+
+Chapter 4 has covered Isaac Manipulation, NVIDIA's GPU-accelerated manipulation stack for AI-powered robotic manipulation. We've explored Isaac Manipulation's architecture, which leverages CUDA and TensorRT for high-performance grasp planning, trajectory optimization, and force control. The examples demonstrated practical implementations of manipulation core functionality, perception integration for object detection and pose estimation, and grasp planning algorithms. The hands-on lab exercises provide experience with Isaac Manipulation installation, perception-action integration, grasp planning, and real-world validation. This foundation enables the development of dexterous, high-performance manipulation systems essential for robots that need to interact with objects in the physical world as part of Physical AI applications.

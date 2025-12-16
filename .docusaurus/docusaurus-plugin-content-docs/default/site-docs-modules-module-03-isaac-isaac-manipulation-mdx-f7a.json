@@ -1,0 +1,27 @@
+{
+  "id": "modules/module-03-isaac/isaac-manipulation",
+  "title": "Chapter 4 - Isaac Manipulation",
+  "description": "Learning Objectives",
+  "source": "@site/docs/modules/module-03-isaac/isaac-manipulation.mdx",
+  "sourceDirName": "modules/module-03-isaac",
+  "slug": "/modules/module-03-isaac/isaac-manipulation",
+  "permalink": "/docs/modules/module-03-isaac/isaac-manipulation",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/modules/module-03-isaac/isaac-manipulation.mdx",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Chapter 4 - Isaac Manipulation",
+    "sidebar_label": "Isaac Manipulation"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Overview",
+    "permalink": "/docs/modules/module-03-isaac/"
+  },
+  "next": {
+    "title": "Isaac Navigation",
+    "permalink": "/docs/modules/module-03-isaac/isaac-navigation"
+  }
+}

@@ -1,0 +1,1166 @@
+---
+title: Chapter 3 - Capstone Project
+sidebar_label: Capstone Project
+---
+
+# Chapter 3: Capstone Project
+
+## Learning Objectives
+
+By the end of this chapter, you will be able to:
+- Integrate all components from previous modules into a comprehensive Physical AI system
+- Design and implement a complete humanoid robotics application
+- Apply Vision-Language-Action principles to a real-world scenario
+- Demonstrate multimodal AI capabilities in a physical system
+- Validate and evaluate the complete system performance
+- Document and present the integrated system for academic and industrial audiences
+
+## Physical AI Concept
+
+The Capstone Project represents the culmination of all concepts learned throughout the Physical AI & Humanoid Robotics curriculum. It demonstrates the integration of perception, cognition, and action in a complete physical system that can interact with the real world. This project embodies the essence of Physical AI by creating a system that bridges the digital and physical realms through embodied intelligence.
+
+The capstone system integrates:
+- **Perception**: Computer vision, sensor processing, and environmental understanding
+- **Cognition**: Natural language processing, reasoning, and decision making
+- **Action**: Navigation, manipulation, and physical interaction capabilities
+- **Integration**: Seamless coordination between all components for coherent behavior
+- **Embodiment**: Physical manifestation of AI capabilities in a robotic platform
+
+This project demonstrates how all the individual components studied in previous modules work together to create a unified Physical AI system capable of complex, real-world interactions.
+
+## System Architecture
+
+### Complete Physical AI System Architecture
+
+```
+Complete Physical AI System Architecture:
+┌─────────────────────────────────────────────────────────────────────┐
+│                    Human-System Interface                         │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐    │
+│  │   Voice         │  │   Visual        │  │   Haptic        │    │
+│  │   Commands      │  │   Interaction   │  │   Feedback      │    │
+│  │  • Natural      │  │  • Gesture     │  │  • Force        │    │
+│  │    Language     │  │    Recognition  │  │    Feedback     │    │
+│  │  • Questions    │  │  • Object      │  │  • Tactile      │    │
+│  │  • Instructions │  │    Recognition  │  │    Interaction  │    │
+│  │  • Conversations│  │  • Scene       │  │  • Touch        │    │
+│  │                 │  │    Understanding│  │    Responses    │    │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘    │
+│              │                    │                    │           │
+│              ▼                    ▼                    ▼           │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │              Multimodal Perception Layer                    │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │  │
+│  │  │  Vision     │  │  Audio      │  │  Sensor      │        │  │
+│  │  │  Processing │  │  Processing │  │  Fusion      │        │  │
+│  │  │  • Object   │  │  • Speech   │  │  • IMU        │        │  │
+│  │  │    Detection │  │    Recognition│  │  • LIDAR      │        │  │
+│  │  │  • Scene    │  │  • Noise    │  │  • Force      │        │  │
+│  │  │    Understanding││    Reduction │  │    Sensors    │        │  │
+│  │  │  • 3D       │  │  • Wake     │  │  • Multi-     │        │  │
+│  │  │    Reconstruction││    Word     │  │    Modal      │        │  │
+│  │  └─────────────┘  │    Detection │  │    Integration│        │  │
+│  └────────────────────└─────────────┘  └─────────────┘────────┘  │
+│                                     │                            │
+│                                     ▼                            │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │              AI Reasoning & Planning Core                   │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │  │
+│  │  │  Language   │  │  Vision-    │  │  Decision    │        │  │
+│  │  │  Understanding│ │  Language-  │  │  Making     │        │  │
+│  │  │  • Intent   │  │  Action     │  │  • Task      │        │  │
+│  │  │    Extraction│  │    Integration│ │    Planning   │        │  │
+│  │  │  • Semantic │  │  • Grasp    │  │  • Behavior  │        │  │
+│  │  │    Parsing   │  │    Planning  │  │    Selection │        │  │
+│  │  │  • Context  │  │  • Navigation│  │  • Policy    │        │  │
+│  │  │    Modeling  │  │    Planning  │  │    Execution │        │  │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘        │  │
+│  └─────────────────────────────────────────────────────────────┘  │
+│                                     │                            │
+│                                     ▼                            │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │              Physical Action Execution                      │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │  │
+│  │  │  Navigation │  │  Manipulation│  │  Social      │        │  │
+│  │  │  • Path     │  │  • Grasping  │  │  Interaction │        │  │
+│  │  │    Planning  │  │  • Tool Use │  │  • Expressions│        │  │
+│  │  │  • Obstacle  │  │  • Force    │  │  • Etiquette │        │  │
+│  │  │    Avoidance │  │    Control  │  │  • Emotions  │        │  │
+│  │  │  • SLAM      │  │  • Multi-   │  │  • Safety    │        │  │
+│  │  │  • Localization││    Fingered  │  │    Protocols │        │  │
+│  │  └─────────────┘  │    Grasping  │  └─────────────┘        │  │
+│  └────────────────────└─────────────┘─────────────────────────┘  │
+│                                     │                            │
+│                                     ▼                            │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │              Hardware Abstraction Layer                     │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │  │
+│  │  │  Perception │  │  Control    │  │  Communication│        │  │
+│  │  │  • Camera   │  │  • Joint    │  │  • ROS 2      │        │  │
+│  │  │    Drivers   │  │    Control  │  │  • Isaac     │        │  │
+│  │  │  • Sensor   │  │  • Trajectory│ │    Communication│      │  │
+│  │  │    Interfaces│  │    Planning  │  │  • Network   │        │  │
+│  │  │  • Data     │  │  • Motion   │  │    Protocols  │        │  │
+│  │  │    Preprocessing││    Control  │  │  • Real-time │        │  │
+│  │  └─────────────┘  └─────────────┘  │    Communication│      │  │
+│  └─────────────────────────────────────└─────────────┘────────┘  │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Capstone System Integration Architecture
+
+```
+Capstone System Integration:
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   External      │───▶│  Main Control   │───▶│  Perception     │
+│   Commands      │    │  Node          │    │  Subsystem     │
+│  • Voice        │    │  • Task        │    │  • Vision      │
+│  • Text         │    │    Orchestrator │    │  • Audio       │
+│  • Gesture      │    │  • State       │    │  • Sensor      │
+│  • App Control  │    │    Management   │    │    Processing   │
+└─────────────────┘    │  • Safety      │    └─────────────────┘
+         │               │    Monitoring   │              │
+         ▼               └─────────────────┘              ▼
+┌─────────────────┐              │               ┌─────────────────┐
+│   Task Planning │───▶┌─────────────────┐───▶│  Action         │
+│   Subsystem     │    │  Integration    │    │  Execution      │
+│  • High-level   │    │  Layer          │    │  Subsystem     │
+│    Planning     │    │  • Data         │    │  • Navigation  │
+│  • Skill        │    │    Aggregation   │    │  • Manipulation│
+│    Composition  │    │  • Event        │    │  • Interaction │
+│  • Sequence     │    │    Synchronization│   │  • Safety      │
+│    Generation   │    │  • Component    │    │    Management   │
+└─────────────────┘    │    Coordination  │    └─────────────────┘
+         │               └─────────────────┘              │
+         ▼                       │                        ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Simulation    │───▶│  Real-world     │───▶│  Evaluation     │
+│   Interface     │    │  Interface      │    │  & Validation   │
+│  • Gazebo       │    │  • Hardware     │    │  • Performance  │
+│  • Isaac Sim    │    │    Abstraction   │    │    Metrics     │
+│  • Unity        │    │  • Safety       │    │  • Accuracy    │
+│  • Environment  │    │    Override     │    │  • Robustness  │
+│    Simulation   │    │  • Calibration  │    │  • User        │
+└─────────────────┘    │    Management   │    │    Satisfaction │
+                       └─────────────────┘    └─────────────────┘
+```
+
+## Tools & Software
+
+This capstone project integrates all tools and software from previous modules:
+- **ROS 2 Humble Hawksbill** - Robot operating system framework
+- **NVIDIA Isaac** - GPU-accelerated robotics platform
+- **Gazebo** - Physics-based simulation environment
+- **Unity** - 3D visualization and simulation
+- **OpenVLA** - Vision-Language-Action models
+- **CLIP** - Vision-language models for multimodal understanding
+- **Transformers** - Hugging Face libraries for language models
+- **PyTorch/TensorFlow** - Deep learning frameworks
+- **OpenCV** - Computer vision library
+- **Rviz2** - Visualization for debugging and monitoring
+
+## Code / Configuration Examples
+
+### Capstone Main Control Node
+```python
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String, Bool, Int8
+from sensor_msgs.msg import Image, LaserScan, JointState
+from geometry_msgs.msg import Pose, Twist
+from nav_msgs.msg import Odometry
+from geometry_msgs.msg import Point
+from builtin_interfaces.msg import Time
+from tf2_ros import TransformException
+from tf2_ros.buffer import Buffer
+from tf2_ros.transform_listener import TransformListener
+import numpy as np
+import math
+import time
+import threading
+import queue
+from enum import Enum
+from dataclasses import dataclass
+from typing import Dict, List, Optional
+
+class TaskState(Enum):
+    IDLE = 1
+    PLANNING = 2
+    EXECUTING = 3
+    COMPLETED = 4
+    FAILED = 5
+    PAUSED = 6
+
+class RobotState(Enum):
+    INITIALIZING = 1
+    READY = 2
+    BUSY = 3
+    ERROR = 4
+    SAFETY_STOP = 5
+
+@dataclass
+class Task:
+    id: str
+    type: str
+    description: str
+    priority: int
+    state: TaskState
+    created_time: float
+    start_time: Optional[float] = None
+    completion_time: Optional[float] = None
+    dependencies: List[str] = None
+    resources_required: List[str] = None
+
+class CapstoneMainControlNode(Node):
+    def __init__(self):
+        super().__init__('capstone_main_control')
+
+        # TF2 setup
+        self.tf_buffer = Buffer()
+        self.tf_listener = TransformListener(self.tf_buffer, self)
+
+        # Publishers and subscribers
+        self.setup_communication_interfaces()
+
+        # Initialize system components
+        self.initialize_system_components()
+
+        # Task management
+        self.task_queue = queue.Queue()
+        self.active_tasks = {}
+        self.completed_tasks = []
+        self.failed_tasks = []
+
+        # System state
+        self.robot_state = RobotState.INITIALIZING
+        self.current_task = None
+        self.system_health = {'perception': True, 'navigation': True, 'manipulation': True, 'communication': True}
+        self.safety_status = True
+
+        # Task planning parameters
+        self.max_concurrent_tasks = 3
+        self.task_retry_limit = 3
+        self.task_timeout = 300.0  # 5 minutes
+
+        # Timers for system monitoring
+        self.monitoring_timer = self.create_timer(1.0, self.system_monitoring_callback)
+        self.task_execution_timer = self.create_timer(0.1, self.task_execution_callback)
+
+        # Threads for parallel processing
+        self.perception_thread = threading.Thread(target=self.perception_processing_loop)
+        self.perception_thread.daemon = True
+        self.perception_thread.start()
+
+        self.get_logger().info('Capstone Main Control node initialized')
+
+    def setup_communication_interfaces(self):
+        """Setup all publishers and subscribers for system integration"""
+        # Command interfaces
+        self.command_sub = self.create_subscription(
+            String, '/capstone/command', self.command_callback, 10
+        )
+        self.voice_command_sub = self.create_subscription(
+            String, '/robot/voice_command', self.voice_command_callback, 10
+        )
+
+        # Sensor interfaces
+        self.odom_sub = self.create_subscription(
+            Odometry, '/odom', self.odom_callback, 10
+        )
+        self.scan_sub = self.create_subscription(
+            LaserScan, '/scan', self.scan_callback, 10
+        )
+        self.joint_state_sub = self.create_subscription(
+            JointState, '/joint_states', self.joint_state_callback, 10
+        )
+        self.camera_sub = self.create_subscription(
+            Image, '/camera/rgb/image_rect_color', self.camera_callback, 10
+        )
+
+        # Control interfaces
+        self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
+        self.status_pub = self.create_publisher(String, '/capstone/status', 10)
+        self.task_status_pub = self.create_publisher(String, '/capstone/task_status', 10)
+        self.system_alert_pub = self.create_publisher(String, '/capstone/system_alert', 10)
+
+        # Integration with other subsystems
+        self.navigation_goal_pub = self.create_publisher(Pose, '/navigation/goal', 10)
+        self.manipulation_cmd_pub = self.create_publisher(String, '/manipulation/command', 10)
+        self.perception_req_pub = self.create_publisher(String, '/perception/request', 10)
+
+    def initialize_system_components(self):
+        """Initialize all system components and verify connectivity"""
+        self.get_logger().info('Initializing system components...')
+
+        # Initialize component status
+        self.component_status = {
+            'navigation': False,
+            'manipulation': False,
+            'perception': False,
+            'communication': False
+        }
+
+        # Verify component connectivity
+        self.verify_component_connectivity()
+
+        # Initialize robot state
+        self.robot_state = RobotState.READY
+        self.get_logger().info('System components initialized successfully')
+
+    def verify_component_connectivity(self):
+        """Verify that all required components are available"""
+        # This would normally involve service calls or topic availability checks
+        # For this example, we'll simulate component verification
+        import random
+        for component in self.component_status:
+            # Simulate 95% availability for each component
+            self.component_status[component] = random.random() > 0.05
+
+        self.get_logger().info(f'Component status: {self.component_status}')
+
+    def command_callback(self, msg):
+        """Process high-level commands"""
+        command = msg.data.strip().lower()
+        self.get_logger().info(f'Received command: {command}')
+
+        # Parse command and create appropriate task
+        task = self.parse_command_to_task(command)
+        if task:
+            self.task_queue.put(task)
+            self.get_logger().info(f'Queued task: {task.id} - {task.description}')
+
+    def voice_command_callback(self, msg):
+        """Process voice commands from conversational system"""
+        voice_command = msg.data.strip()
+        self.get_logger().info(f'Received voice command: {voice_command}')
+
+        # Convert voice command to task
+        task = self.parse_voice_command_to_task(voice_command)
+        if task:
+            self.task_queue.put(task)
+            self.get_logger().info(f'Queued voice task: {task.id} - {task.description}')
+
+    def parse_command_to_task(self, command):
+        """Parse command string into Task object"""
+        command_lower = command.lower()
+
+        if 'navigate' in command_lower or 'go to' in command_lower:
+            # Extract destination
+            destination = self.extract_destination_from_command(command)
+            return Task(
+                id=f"nav_{int(time.time())}",
+                type='navigation',
+                description=f'Navigate to {destination}',
+                priority=5,
+                state=TaskState.IDLE,
+                created_time=time.time(),
+                resources_required=['navigation', 'perception']
+            )
+
+        elif 'pick up' in command_lower or 'grasp' in command_lower:
+            # Extract object
+            obj = self.extract_object_from_command(command)
+            return Task(
+                id=f"manip_{int(time.time())}",
+                type='manipulation',
+                description=f'Pick up {obj}',
+                priority=6,
+                state=TaskState.IDLE,
+                created_time=time.time(),
+                resources_required=['manipulation', 'perception']
+            )
+
+        elif 'inspect' in command_lower or 'look at' in command_lower:
+            # Extract target
+            target = self.extract_target_from_command(command)
+            return Task(
+                id=f"inspect_{int(time.time())}",
+                type='perception',
+                description=f'Inspect {target}',
+                priority=4,
+                state=TaskState.IDLE,
+                created_time=time.time(),
+                resources_required=['perception']
+            )
+
+        else:
+            # Generic task for unrecognized commands
+            return Task(
+                id=f"generic_{int(time.time())}",
+                type='generic',
+                description=command,
+                priority=3,
+                state=TaskState.IDLE,
+                created_time=time.time(),
+                resources_required=['communication']
+            )
+
+    def parse_voice_command_to_task(self, command):
+        """Parse voice command to Task object with enhanced NLP processing"""
+        # In a real implementation, this would use more sophisticated NLP
+        # For this example, we'll use the same parser
+        return self.parse_command_to_task(command)
+
+    def extract_destination_from_command(self, command):
+        """Extract destination from navigation command"""
+        # Simple keyword extraction
+        keywords = ['kitchen', 'living room', 'bedroom', 'office', 'lab', 'workshop', 'entrance', 'exit']
+        for keyword in keywords:
+            if keyword in command.lower():
+                return keyword
+        return 'specified location'
+
+    def extract_object_from_command(self, command):
+        """Extract object from manipulation command"""
+        # Simple object extraction
+        objects = ['cup', 'book', 'phone', 'laptop', 'bottle', 'box', 'ball', 'toy']
+        for obj in objects:
+            if obj in command.lower():
+                return obj
+        return 'target object'
+
+    def extract_target_from_command(self, command):
+        """Extract target from inspection command"""
+        # Simple target extraction
+        targets = ['object', 'area', 'room', 'person', 'thing', 'item']
+        for target in targets:
+            if target in command.lower():
+                return target
+        return 'specified target'
+
+    def system_monitoring_callback(self):
+        """Monitor system health and safety status"""
+        # Check component health
+        for component, status in self.component_status.items():
+            if not status:
+                self.get_logger().warn(f'{component} component is offline')
+
+        # Check task execution
+        active_count = sum(1 for task in self.active_tasks.values() if task.state == TaskState.EXECUTING)
+        if active_count > self.max_concurrent_tasks:
+            self.get_logger().warn(f'Too many concurrent tasks: {active_count}')
+
+        # Check safety systems
+        if not self.safety_status:
+            self.get_logger().error('Safety system override detected')
+            self.emergency_stop()
+
+        # Publish system status
+        status_msg = String()
+        status_msg.data = f"State: {self.robot_state.name}, Active Tasks: {len(self.active_tasks)}, Health: {self.system_health}"
+        self.status_pub.publish(status_msg)
+
+    def task_execution_callback(self):
+        """Execute tasks from the queue"""
+        # Check for completed tasks
+        for task_id, task in list(self.active_tasks.items()):
+            if task.state == TaskState.COMPLETED or task.state == TaskState.FAILED:
+                if task.state == TaskState.COMPLETED:
+                    self.completed_tasks.append(task)
+                else:
+                    self.failed_tasks.append(task)
+                del self.active_tasks[task_id]
+
+        # Execute new tasks if possible
+        if not self.task_queue.empty() and len(self.active_tasks) < self.max_concurrent_tasks:
+            try:
+                task = self.task_queue.get_nowait()
+                if self.can_execute_task(task):
+                    self.execute_task(task)
+                else:
+                    # Put back in queue if resources not available
+                    self.task_queue.put(task)
+            except queue.Empty:
+                pass
+
+    def can_execute_task(self, task):
+        """Check if task can be executed given current resources"""
+        if not self.safety_status:
+            return False
+
+        # Check if required resources are available
+        for resource in task.resources_required or []:
+            if resource in self.component_status and not self.component_status[resource]:
+                return False
+
+        # Check robot state
+        if self.robot_state != RobotState.READY:
+            return False
+
+        return True
+
+    def execute_task(self, task):
+        """Execute a task"""
+        self.get_logger().info(f'Executing task: {task.id} - {task.description}')
+
+        # Update task state
+        task.state = TaskState.EXECUTING
+        task.start_time = time.time()
+        self.active_tasks[task.id] = task
+
+        # Publish task status
+        task_status_msg = String()
+        task_status_msg.data = f"EXECUTING: {task.description}"
+        self.task_status_pub.publish(task_status_msg)
+
+        # Execute based on task type
+        if task.type == 'navigation':
+            self.execute_navigation_task(task)
+        elif task.type == 'manipulation':
+            self.execute_manipulation_task(task)
+        elif task.type == 'perception':
+            self.execute_perception_task(task)
+        else:
+            self.execute_generic_task(task)
+
+    def execute_navigation_task(self, task):
+        """Execute navigation task"""
+        self.get_logger().info(f'Executing navigation task: {task.description}')
+
+        # In a real implementation, this would interface with navigation stack
+        # For this example, we'll simulate navigation
+        import threading
+        threading.Timer(10.0, lambda: self.complete_task(task.id, TaskState.COMPLETED)).start()
+
+    def execute_manipulation_task(self, task):
+        """Execute manipulation task"""
+        self.get_logger().info(f'Executing manipulation task: {task.description}')
+
+        # In a real implementation, this would interface with manipulation stack
+        # For this example, we'll simulate manipulation
+        import threading
+        threading.Timer(15.0, lambda: self.complete_task(task.id, TaskState.COMPLETED)).start()
+
+    def execute_perception_task(self, task):
+        """Execute perception task"""
+        self.get_logger().info(f'Executing perception task: {task.description}')
+
+        # In a real implementation, this would interface with perception system
+        # For this example, we'll simulate perception
+        import threading
+        threading.Timer(5.0, lambda: self.complete_task(task.id, TaskState.COMPLETED)).start()
+
+    def execute_generic_task(self, task):
+        """Execute generic task"""
+        self.get_logger().info(f'Executing generic task: {task.description}')
+
+        # For this example, we'll simulate generic task completion
+        import threading
+        threading.Timer(3.0, lambda: self.complete_task(task.id, TaskState.COMPLETED)).start()
+
+    def complete_task(self, task_id, state):
+        """Complete a task with specified state"""
+        if task_id in self.active_tasks:
+            task = self.active_tasks[task_id]
+            task.state = state
+            task.completion_time = time.time()
+
+            # Log completion
+            if state == TaskState.COMPLETED:
+                self.get_logger().info(f'Task completed: {task_id}')
+            else:
+                self.get_logger().warn(f'Task failed: {task_id}')
+
+    def perception_processing_loop(self):
+        """Background thread for perception processing"""
+        while rclpy.ok():
+            # Process perception data in background
+            time.sleep(0.1)  # Simulate processing delay
+
+    def odom_callback(self, msg):
+        """Update robot pose from odometry"""
+        # Update internal state
+        pass
+
+    def scan_callback(self, msg):
+        """Process laser scan data"""
+        # Update internal state
+        pass
+
+    def joint_state_callback(self, msg):
+        """Process joint state data"""
+        # Update internal state
+        pass
+
+    def camera_callback(self, msg):
+        """Process camera data"""
+        # Update internal state
+        pass
+
+    def emergency_stop(self):
+        """Emergency stop procedure"""
+        self.get_logger().error('EMERGENCY STOP ACTIVATED')
+
+        # Stop all robot motion
+        stop_cmd = Twist()
+        self.cmd_vel_pub.publish(stop_cmd)
+
+        # Update robot state
+        self.robot_state = RobotState.SAFETY_STOP
+
+        # Publish alert
+        alert_msg = String()
+        alert_msg.data = "EMERGENCY_STOP: All systems halted"
+        self.system_alert_pub.publish(alert_msg)
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = CapstoneMainControlNode()
+
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        node.get_logger().info('Shutting down capstone system...')
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Capstone Integration Test Suite
+```python
+import unittest
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+from geometry_msgs.msg import Pose
+import time
+
+class CapstoneIntegrationTest(unittest.TestCase):
+    def setUp(self):
+        """Set up test environment"""
+        rclpy.init()
+        self.test_node = Node('capstone_integration_test')
+
+        # Publishers for testing
+        self.command_pub = self.test_node.create_publisher(String, '/capstone/command', 10)
+        self.navigation_goal_pub = self.test_node.create_publisher(Pose, '/navigation/goal', 10)
+
+        # Subscribers for verification
+        self.status_messages = []
+        self.task_status_messages = []
+
+        self.status_sub = self.test_node.create_subscription(
+            String, '/capstone/status', self.status_callback, 10
+        )
+        self.task_status_sub = self.test_node.create_subscription(
+            String, '/capstone/task_status', self.task_status_callback, 10
+        )
+
+    def status_callback(self, msg):
+        """Collect status messages for verification"""
+        self.status_messages.append(msg.data)
+
+    def task_status_callback(self, msg):
+        """Collect task status messages for verification"""
+        self.task_status_messages.append(msg.data)
+
+    def tearDown(self):
+        """Clean up after tests"""
+        self.test_node.destroy_node()
+        rclpy.shutdown()
+
+    def test_basic_navigation_task(self):
+        """Test basic navigation task execution"""
+        # Send navigation command
+        command_msg = String()
+        command_msg.data = "navigate to kitchen"
+        self.command_pub.publish(command_msg)
+
+        # Wait for system to process
+        time.sleep(2.0)
+
+        # Verify system received and processed command
+        self.assertTrue(len(self.task_status_messages) > 0)
+        self.assertTrue(any("EXECUTING" in msg for msg in self.task_status_messages))
+        self.assertTrue("State: READY" in self.status_messages[-1])
+
+    def test_system_monitoring(self):
+        """Test system monitoring functionality"""
+        # Wait for monitoring to run
+        time.sleep(2.0)
+
+        # Verify monitoring messages are published
+        self.assertTrue(len(self.status_messages) > 0)
+        self.assertIn("State:", self.status_messages[-1])
+        self.assertIn("Active Tasks:", self.status_messages[-1])
+
+    def test_multimodal_integration(self):
+        """Test integration of multiple modalities"""
+        # This would test the integration of vision, language, and action
+        # For this example, we'll verify the system can accept different command types
+        commands = [
+            "navigate to living room",
+            "pick up cup",
+            "inspect object"
+        ]
+
+        for cmd in commands:
+            command_msg = String()
+            command_msg.data = cmd
+            self.command_pub.publish(command_msg)
+            time.sleep(0.5)
+
+        # Verify all commands were processed
+        self.assertTrue(len(self.task_status_messages) >= len(commands))
+
+class CapstonePerformanceTest(unittest.TestCase):
+    def setUp(self):
+        """Set up performance test environment"""
+        rclpy.init()
+        self.test_node = Node('capstone_performance_test')
+
+        # Publishers for performance testing
+        self.command_pub = self.test_node.create_publisher(String, '/capstone/command', 10)
+        self.status_messages = []
+
+        self.status_sub = self.test_node.create_subscription(
+            String, '/capstone/status', self.status_callback, 10
+        )
+
+    def status_callback(self, msg):
+        """Collect status messages for performance analysis"""
+        self.status_messages.append((time.time(), msg.data))
+
+    def tearDown(self):
+        """Clean up after performance tests"""
+        self.test_node.destroy_node()
+        rclpy.shutdown()
+
+    def test_concurrent_task_handling(self):
+        """Test system's ability to handle concurrent tasks"""
+        start_time = time.time()
+
+        # Send multiple commands quickly
+        for i in range(5):
+            command_msg = String()
+            command_msg.data = f"navigate to location_{i}"
+            self.command_pub.publish(command_msg)
+            time.sleep(0.1)  # Small delay between commands
+
+        # Wait for processing
+        time.sleep(3.0)
+
+        elapsed_time = time.time() - start_time
+        print(f"Concurrent task handling time: {elapsed_time:.2f}s")
+
+        # Verify system handled multiple tasks
+        self.assertTrue(len(self.status_messages) > 0)
+
+def run_integration_tests():
+    """Run all integration tests"""
+    print("Running Capstone Integration Tests...")
+
+    # Create test suite
+    loader = unittest.TestLoader()
+    suite = unittest.TestSuite()
+
+    # Add tests
+    suite.addTest(loader.loadTestsFromTestCase(CapstoneIntegrationTest))
+    suite.addTest(loader.loadTestsFromTestCase(CapstonePerformanceTest))
+
+    # Run tests
+    runner = unittest.TextTestRunner(verbosity=2)
+    result = runner.run(suite)
+
+    # Print summary
+    print(f"\nIntegration Tests Result:")
+    print(f"Tests run: {result.testsRun}")
+    print(f"Failures: {len(result.failures)}")
+    print(f"Errors: {len(result.errors)}")
+    print(f"Success: {result.wasSuccessful()}")
+
+    return result.wasSuccessful()
+
+if __name__ == '__main__':
+    success = run_integration_tests()
+    exit(0 if success else 1)
+```
+
+### Capstone System Evaluation Node
+```python
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String, Float32, Int32
+from sensor_msgs.msg import Image
+from geometry_msgs.msg import PoseStamped
+from visualization_msgs.msg import MarkerArray
+import numpy as np
+import time
+from datetime import datetime
+import json
+import csv
+
+class CapstoneSystemEvaluationNode(Node):
+    def __init__(self):
+        super().__init__('capstone_system_evaluation')
+
+        # Publishers
+        self.performance_metrics_pub = self.create_publisher(
+            String, '/capstone/performance_metrics', 10
+        )
+        self.accuracy_metrics_pub = self.create_publisher(
+            String, '/capstone/accuracy_metrics', 10
+        )
+        self.robustness_metrics_pub = self.create_publisher(
+            String, '/capstone/robustness_metrics', 10
+        )
+        self.visualization_pub = self.create_publisher(
+            MarkerArray, '/capstone/evaluation_visualization', 10
+        )
+
+        # Subscribers
+        self.task_status_sub = self.create_subscription(
+            String, '/capstone/task_status', self.task_status_callback, 10
+        )
+        self.system_status_sub = self.create_subscription(
+            String, '/capstone/status', self.system_status_callback, 10
+        )
+        self.command_sub = self.create_subscription(
+            String, '/capstone/command', self.command_callback, 10
+        )
+
+        # Evaluation state
+        self.evaluation_data = {
+            'task_success_rate': 0.0,
+            'average_completion_time': 0.0,
+            'system_uptime': 0.0,
+            'response_time': [],
+            'task_completions': [],
+            'failures': [],
+            'accuracy_metrics': {},
+            'robustness_metrics': {}
+        }
+
+        # Timing and measurement
+        self.command_timestamps = {}
+        self.task_start_times = {}
+        self.evaluation_start_time = time.time()
+
+        # Evaluation parameters
+        self.evaluation_window = 300.0  # 5 minutes
+        self.metrics_collection_interval = 10.0  # 10 seconds
+
+        # Timers
+        self.metrics_timer = self.create_timer(
+            self.metrics_collection_interval, self.collect_metrics
+        )
+        self.reporting_timer = self.create_timer(
+            60.0, self.generate_evaluation_report  # Report every minute
+        )
+
+        # CSV file for detailed logging
+        self.csv_filename = f"capstone_evaluation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+        self.csv_fields = [
+            'timestamp', 'metric_type', 'metric_name', 'value', 'unit'
+        ]
+        self.init_csv_logging()
+
+        self.get_logger().info('Capstone System Evaluation node initialized')
+
+    def init_csv_logging(self):
+        """Initialize CSV file for detailed metric logging"""
+        with open(self.csv_filename, 'w', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=self.csv_fields)
+            writer.writeheader()
+            csvfile.flush()
+
+    def log_metric_to_csv(self, metric_type, metric_name, value, unit=''):
+        """Log metric to CSV file"""
+        with open(self.csv_filename, 'a', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=self.csv_fields)
+            writer.writerow({
+                'timestamp': datetime.now().isoformat(),
+                'metric_type': metric_type,
+                'metric_name': metric_name,
+                'value': value,
+                'unit': unit
+            })
+            csvfile.flush()
+
+    def task_status_callback(self, msg):
+        """Process task status updates for evaluation"""
+        status_text = msg.data
+
+        # Parse task status
+        if "EXECUTING:" in status_text:
+            task_desc = status_text.replace("EXECUTING: ", "")
+            self.task_start_times[task_desc] = time.time()
+        elif "COMPLETED" in status_text or "FAILED" in status_text:
+            # Calculate completion time and update metrics
+            for task_desc, start_time in list(self.task_start_times.items()):
+                if task_desc in status_text:
+                    completion_time = time.time() - start_time
+                    self.evaluation_data['task_completions'].append(completion_time)
+
+                    # Log to CSV
+                    self.log_metric_to_csv(
+                        'task', 'completion_time', completion_time, 'seconds'
+                    )
+
+                    # Remove from tracking
+                    del self.task_start_times[task_desc]
+
+    def system_status_callback(self, msg):
+        """Process system status updates for evaluation"""
+        # Extract system status information
+        status_parts = msg.data.split(', ')
+        for part in status_parts:
+            if 'State:' in part:
+                state = part.split(': ')[1]
+                if state == 'ERROR':
+                    self.evaluation_data['failures'].append(time.time())
+                    self.log_metric_to_csv(
+                        'system', 'error_occurred', 1, 'count'
+                    )
+
+    def command_callback(self, msg):
+        """Track command response times"""
+        command = msg.data
+        self.command_timestamps[command] = time.time()
+
+        # Log command received
+        self.log_metric_to_csv(
+            'command', 'received', 1, 'count'
+        )
+
+    def collect_metrics(self):
+        """Collect and calculate evaluation metrics"""
+        current_time = time.time()
+        evaluation_duration = current_time - self.evaluation_start_time
+
+        # Calculate task success rate
+        total_tasks = len(self.evaluation_data['task_completions']) + len(self.evaluation_data['failures'])
+        if total_tasks > 0:
+            success_rate = len(self.evaluation_data['task_completions']) / total_tasks
+            self.evaluation_data['task_success_rate'] = success_rate
+            self.log_metric_to_csv(
+                'performance', 'success_rate', success_rate, 'ratio'
+            )
+
+        # Calculate average completion time
+        if self.evaluation_data['task_completions']:
+            avg_time = np.mean(self.evaluation_data['task_completions'])
+            self.evaluation_data['average_completion_time'] = avg_time
+            self.log_metric_to_csv(
+                'performance', 'avg_completion_time', avg_time, 'seconds'
+            )
+
+        # Calculate system uptime
+        uptime = evaluation_duration - self.calculate_downtime()
+        self.evaluation_data['system_uptime'] = uptime / evaluation_duration if evaluation_duration > 0 else 0
+        self.log_metric_to_csv(
+            'reliability', 'uptime_ratio', self.evaluation_data['system_uptime'], 'ratio'
+        )
+
+        # Publish metrics
+        self.publish_current_metrics()
+
+    def calculate_downtime(self):
+        """Calculate system downtime based on failures"""
+        # In a real system, this would track actual downtime
+        # For this example, we'll estimate based on failure frequency
+        if not self.evaluation_data['failures']:
+            return 0.0
+
+        # Simple calculation: assume each failure causes 10 seconds of downtime
+        return len(self.evaluation_data['failures']) * 10.0
+
+    def publish_current_metrics(self):
+        """Publish current evaluation metrics"""
+        # Performance metrics
+        perf_msg = String()
+        perf_msg.data = json.dumps({
+            'task_success_rate': self.evaluation_data['task_success_rate'],
+            'average_completion_time': self.evaluation_data['average_completion_time'],
+            'system_uptime': self.evaluation_data['system_uptime'],
+            'total_tasks_completed': len(self.evaluation_data['task_completions']),
+            'total_failures': len(self.evaluation_data['failures'])
+        })
+        self.performance_metrics_pub.publish(perf_msg)
+
+        # Accuracy metrics (placeholder - in real system would be perception accuracy)
+        acc_msg = String()
+        acc_msg.data = json.dumps({
+            'object_detection_accuracy': 0.95,
+            'pose_estimation_accuracy': 0.92,
+            'command_understanding_accuracy': 0.88
+        })
+        self.accuracy_metrics_pub.publish(acc_msg)
+
+        # Robustness metrics
+        rob_msg = String()
+        rob_msg.data = json.dumps({
+            'failure_recovery_rate': 0.99,
+            'safe_operation_percentage': 0.995,
+            'graceful_degradation_score': 0.85
+        })
+        self.robustness_metrics_pub.publish(rob_msg)
+
+    def generate_evaluation_report(self):
+        """Generate comprehensive evaluation report"""
+        current_time = time.time()
+        evaluation_duration = current_time - self.evaluation_start_time
+
+        report = {
+            'evaluation_period': evaluation_duration,
+            'timestamp': datetime.now().isoformat(),
+            'performance': {
+                'task_success_rate': self.evaluation_data['task_success_rate'],
+                'average_completion_time': self.evaluation_data['average_completion_time'],
+                'system_uptime': self.evaluation_data['system_uptime'],
+                'total_tasks_processed': len(self.evaluation_data['task_completions']) + len(self.evaluation_data['failures'])
+            },
+            'accuracy': {
+                'object_detection_accuracy': 0.95,
+                'pose_estimation_accuracy': 0.92,
+                'command_understanding_accuracy': 0.88
+            },
+            'robustness': {
+                'failure_recovery_rate': 0.99,
+                'safe_operation_percentage': 0.995,
+                'graceful_degradation_score': 0.85
+            },
+            'summary': self.generate_summary_evaluation()
+        }
+
+        self.get_logger().info(f"Evaluation Report:\n{json.dumps(report, indent=2)}")
+
+    def generate_summary_evaluation(self):
+        """Generate summary evaluation of system performance"""
+        # Calculate overall performance score
+        perf_score = self.evaluation_data['task_success_rate'] * 0.4 + \
+                    (1.0 - min(1.0, self.evaluation_data['average_completion_time'] / 60.0)) * 0.3 + \
+                    self.evaluation_data['system_uptime'] * 0.3
+
+        # Determine grade
+        if perf_score >= 0.9:
+            grade = "Excellent"
+        elif perf_score >= 0.8:
+            grade = "Good"
+        elif perf_score >= 0.7:
+            grade = "Fair"
+        else:
+            grade = "Needs Improvement"
+
+        return {
+            'overall_score': perf_score,
+            'grade': grade,
+            'strengths': self.identify_strengths(),
+            'improvements_needed': self.identify_improvements()
+        }
+
+    def identify_strengths(self):
+        """Identify system strengths based on metrics"""
+        strengths = []
+        if self.evaluation_data['task_success_rate'] > 0.9:
+            strengths.append("High task completion success rate")
+        if self.evaluation_data['system_uptime'] > 0.95:
+            strengths.append("Excellent system reliability")
+        if self.evaluation_data['average_completion_time'] < 30.0:
+            strengths.append("Fast task execution")
+        return strengths
+
+    def identify_improvements(self):
+        """Identify areas needing improvement"""
+        improvements = []
+        if self.evaluation_data['task_success_rate'] < 0.8:
+            improvements.append("Task completion rate needs improvement")
+        if self.evaluation_data['average_completion_time'] > 60.0:
+            improvements.append("Task execution time is too slow")
+        if len(self.evaluation_data['failures']) > 0:
+            improvements.append("System stability needs improvement")
+        return improvements
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = CapstoneSystemEvaluationNode()
+
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        node.get_logger().info('Shutting down evaluation system...')
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+## Practical Lab / Simulation
+
+### Lab Exercise 1: System Integration
+
+1. Integrate all modules (ROS 2, Simulation, NVIDIA Isaac, VLA) into one system
+2. Test communication between all components
+3. Validate data flow and synchronization
+4. Identify and resolve integration issues
+5. Document system architecture and interfaces
+
+### Lab Exercise 2: Task Orchestration
+
+1. Implement the Capstone Main Control Node
+2. Test task planning and execution
+3. Validate resource management and scheduling
+4. Evaluate system monitoring and safety features
+5. Test with various task sequences and priorities
+
+### Lab Exercise 3: Performance Evaluation
+
+1. Implement the Capstone System Evaluation Node
+2. Run comprehensive system tests
+3. Collect performance, accuracy, and robustness metrics
+4. Analyze system behavior under various conditions
+5. Generate evaluation reports and recommendations
+
+### Lab Exercise 4: Integration Testing
+
+1. Run the Capstone Integration Test Suite
+2. Test multimodal interaction scenarios
+3. Validate safety and error handling
+4. Evaluate system reliability and fault tolerance
+5. Document test results and coverage
+
+### Lab Exercise 5: Real-world Validation
+
+1. Deploy system on physical robot platform
+2. Test in real-world environments
+3. Evaluate human-robot interaction quality
+4. Assess system performance in unstructured settings
+5. Document lessons learned and system limitations
+
+### Lab Exercise 6: System Optimization
+
+1. Profile system for performance bottlenecks
+2. Optimize resource utilization
+3. Improve response times and throughput
+4. Enhance system reliability and safety
+5. Document optimal configurations and best practices
+
+## Real-World Mapping
+
+### Industrial Applications
+- **Manufacturing**: Integrated systems for flexible automation
+- **Logistics**: Complete warehouse automation solutions
+- **Healthcare**: Assistive robots for patient care
+
+### Research Applications
+- **Humanoid Robotics**: Complete humanoid robot systems
+- **Autonomous Systems**: Integrated perception-action systems
+- **Human-Robot Interaction**: Natural interaction research platforms
+
+### Key Success Factors
+- **System Integration**: Seamless coordination between all components
+- **Reliability**: Consistent performance in real-world conditions
+- **Safety**: Safe operation in human environments
+- **Usability**: Intuitive interfaces for end users
+- **Scalability**: Ability to adapt to different applications
+
+## Summary
+
+Chapter 3 has completed the Physical AI & Humanoid Robotics textbook with a comprehensive Capstone Project that integrates all concepts learned throughout the course. We've demonstrated how to combine perception, cognition, and action into a unified Physical AI system that can interact with the real world. The capstone project showcases the integration of ROS 2, NVIDIA Isaac, Vision-Language-Action systems, and conversational robotics into a cohesive humanoid robot application. The examples provided practical implementations of system integration, task orchestration, and evaluation methodologies. The hands-on lab exercises offer experience with building, testing, and validating complete Physical AI systems. This concludes the textbook with a demonstration of how all individual components work together to create sophisticated, embodied AI systems capable of complex real-world interactions.

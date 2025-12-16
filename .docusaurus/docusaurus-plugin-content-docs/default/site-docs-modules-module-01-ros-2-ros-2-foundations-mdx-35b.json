@@ -1,0 +1,27 @@
+{
+  "id": "modules/module-01-ros2/ros2-foundations",
+  "title": "Chapter 1 - ROS 2 Foundations",
+  "description": "Learning Objectives",
+  "source": "@site/docs/modules/module-01-ros2/ros2-foundations.mdx",
+  "sourceDirName": "modules/module-01-ros2",
+  "slug": "/modules/module-01-ros2/ros2-foundations",
+  "permalink": "/docs/modules/module-01-ros2/ros2-foundations",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/modules/module-01-ros2/ros2-foundations.mdx",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Chapter 1 - ROS 2 Foundations",
+    "sidebar_label": "ROS 2 Foundations"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Python Agents with rclpy",
+    "permalink": "/docs/modules/module-01-ros2/python-agents-rclpy"
+  },
+  "next": {
+    "title": "Overview",
+    "permalink": "/docs/modules/module-02-gazebo-unity/"
+  }
+}

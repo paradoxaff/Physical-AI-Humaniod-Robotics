@@ -1,0 +1,27 @@
+{
+  "id": "modules/module-01-ros2/physical-ai-robotic-nervous-system",
+  "title": "Lesson 1 - Physical AI and the Robotic Nervous System",
+  "description": "Learning Objectives",
+  "source": "@site/docs/modules/module-01-ros2/physical-ai-robotic-nervous-system.mdx",
+  "sourceDirName": "modules/module-01-ros2",
+  "slug": "/modules/module-01-ros2/physical-ai-robotic-nervous-system",
+  "permalink": "/docs/modules/module-01-ros2/physical-ai-robotic-nervous-system",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/modules/module-01-ros2/physical-ai-robotic-nervous-system.mdx",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Lesson 1 - Physical AI and the Robotic Nervous System",
+    "sidebar_label": "Physical AI and the Robotic Nervous System"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Nodes, Topics, and Services",
+    "permalink": "/docs/modules/module-01-ros2/nodes-topics-services"
+  },
+  "next": {
+    "title": "Python Agents with rclpy",
+    "permalink": "/docs/modules/module-01-ros2/python-agents-rclpy"
+  }
+}

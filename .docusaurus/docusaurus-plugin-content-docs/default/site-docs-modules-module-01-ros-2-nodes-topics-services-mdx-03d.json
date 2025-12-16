@@ -1,0 +1,27 @@
+{
+  "id": "modules/module-01-ros2/nodes-topics-services",
+  "title": "Lesson 2 - Nodes, Topics, and Services",
+  "description": "Learning Objectives",
+  "source": "@site/docs/modules/module-01-ros2/nodes-topics-services.mdx",
+  "sourceDirName": "modules/module-01-ros2",
+  "slug": "/modules/module-01-ros2/nodes-topics-services",
+  "permalink": "/docs/modules/module-01-ros2/nodes-topics-services",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/modules/module-01-ros2/nodes-topics-services.mdx",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Lesson 2 - Nodes, Topics, and Services",
+    "sidebar_label": "Nodes, Topics, and Services"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Overview",
+    "permalink": "/docs/modules/module-01-ros2/"
+  },
+  "next": {
+    "title": "Physical AI and the Robotic Nervous System",
+    "permalink": "/docs/modules/module-01-ros2/physical-ai-robotic-nervous-system"
+  }
+}

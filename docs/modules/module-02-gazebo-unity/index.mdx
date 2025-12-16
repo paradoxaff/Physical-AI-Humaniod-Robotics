@@ -1,0 +1,301 @@
+---
+title: Module 2 - Simulation Environments (Gazebo & Unity)
+sidebar_label: Overview
+---
+
+# Module 2: Simulation Environments (Gazebo & Unity)
+
+## Learning Objectives
+
+By the end of this module, you will be able to:
+- Understand the role of simulation in Physical AI and humanoid robotics development
+- Implement physics-based simulations using Gazebo for robotic systems
+- Create virtual environments using Unity for humanoid robot training
+- Apply Simulation-to-Real (Sim2Real) transfer techniques to bridge simulation and reality
+- Design simulation scenarios that effectively prepare robots for real-world tasks
+- Evaluate the fidelity and transferability of simulation environments
+
+## Physical AI Concept
+
+Simulation environments serve as the "practice grounds" for Physical AI systems, allowing robots to learn and refine behaviors in safe, controllable, and cost-effective virtual worlds. In humanoid robotics, simulation is particularly critical because it enables extensive testing of complex motor control, balance, and interaction behaviors without risk of hardware damage. The Sim2Real challenge addresses how to ensure behaviors learned in simulation transfer effectively to real-world physical systems.
+
+Key aspects of simulation in Physical AI:
+- **Safety**: Robots can learn dangerous behaviors without physical risk
+- **Cost-effectiveness**: Rapid iteration without hardware wear and tear
+- **Controllability**: Precise environmental conditions for consistent testing
+- **Scalability**: Parallel simulation runs for accelerated learning
+- **Repeatability**: Identical conditions for fair comparison of algorithms
+
+## System Architecture
+
+```
+Simulation-to-Real Transfer Architecture:
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                    Simulation Environment                           │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐    │
+│  │   Physics       │  │   Sensor        │  │   Environment   │    │
+│  │   Engine        │  │   Simulation    │  │   Modeling      │    │
+│  │  • Gazebo       │  │  • Camera       │  │  • Objects      │    │
+│  │  • Unity        │  │  • LIDAR        │  │  • Terrain      │    │
+│  │  • MuJoCo       │  │  • IMU          │  │  • Dynamics     │    │
+│  │  • Bullet       │  │  • Force/Torque │  │  • Physics      │    │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘    │
+│              │                    │                    │           │
+│              ▼                    ▼                    ▼           │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │              AI Training & Learning                         │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │  │
+│  │  │  Reinforcement│  │  Imitation  │  │  Transfer   │        │  │
+│  │  │  Learning   │  │  Learning   │  │  Learning   │        │  │
+│  │  │  • Policies │  │  • Human    │  │  • Domain   │        │  │
+│  │  │  • Behaviors│  │  Demonstrations│ │  Adaptation │        │  │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘        │  │
+│  └─────────────────────────────────────────────────────────────┘  │
+│                                     │                            │
+│                                     ▼                            │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │              Reality Gap Analysis                           │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │  │
+│  │  │  Dynamics   │  │  Perception │  │  Control    │        │  │
+│  │  │  Mismatch   │  │  Differences│  │  Robustness │        │  │
+│  │  │  • Friction  │  │  • Noise    │  │  • Adaptation│        │  │
+│  │  │  • Inertia   │  │  • Latency  │  │  • Recovery │        │  │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘        │  │
+│  └─────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────┘
+                     │
+                     ▼
+        ┌─────────────────────────────────────────────────────────────┐
+        │                   Real Robot                                │
+        │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────┐ │
+        │  │   Physical      │  │   Real Sensors  │  │  Control    │ │
+        │  │   Hardware      │  │   & Actuators   │  │  Systems    │ │
+        │  │  • Humanoid     │  │  • Cameras     │  │  • Balance  │ │
+        │  │    Robot        │  │  • LIDAR       │  │  • Locomotion││
+        │  │  • Motors       │  │  • IMU         │  │  • Manipulation││
+        │  │  • Gears        │  │  • Force/Torque│  │  • Planning │ │
+        │  └─────────────────┘  └─────────────────┘  └─────────────┘ │
+        └─────────────────────────────────────────────────────────────┘
+```
+
+## Tools & Software
+
+This module uses the following tools and software:
+- **Gazebo** - Physics-based simulation environment for robotics
+- **Unity** - 3D development platform for creating virtual environments
+- **ROS 2** - Integration between simulation and robot control
+- **Unity Robotics Hub** - Bridge between Unity and ROS 2
+- **NVIDIA Isaac Sim** - Advanced simulation platform for robotics
+- **PyBullet** - Physics engine for robotics simulation
+- **MuJoCo** - Advanced physics simulation engine
+
+## Code / Configuration Examples
+
+### Gazebo World Definition (SDF Format)
+```xml
+<?xml version="1.0" ?>
+<sdf version="1.7">
+  <world name="physical_ai_world">
+    <!-- Include standard atmosphere and physics -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <physics type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>1000.0</real_time_update_rate>
+    </physics>
+
+    <!-- Ground plane -->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <!-- Simple humanoid robot model -->
+    <model name="simple_humanoid">
+      <pose>0 0 1 0 0 0</pose>
+      <link name="torso">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.3 0.2 0.5</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.3 0.2 0.5</size>
+            </box>
+          </geometry>
+        </visual>
+        <inertial>
+          <mass>10.0</mass>
+          <inertia>
+            <ixx>0.1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.1</iyy>
+            <iyz>0</iyz>
+            <izz>0.1</izz>
+          </inertia>
+        </inertial>
+      </link>
+    </model>
+
+    <!-- Obstacles for navigation training -->
+    <model name="training_obstacle_1">
+      <pose>-2 1 0.5 0 0 0</pose>
+      <link name="obstacle_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.5 0.5 1.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.5 0.5 1.0</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.8 0.2 0.2 1</ambient>
+            <diffuse>0.8 0.2 0.2 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+  </world>
+</sdf>
+```
+
+### Unity Robot Controller Script (C#)
+```csharp
+using UnityEngine;
+using Unity.Robotics.ROSTCPConnector;
+using RosMessageTypes.Sensor;
+using RosMessageTypes.Geometry;
+
+public class UnityRobotController : MonoBehaviour
+{
+    [Header("Robot Configuration")]
+    public float moveSpeed = 2.0f;
+    public float rotationSpeed = 50.0f;
+
+    [Header("ROS Connection")]
+    public string robotName = "unity_robot";
+
+    private ROSConnection ros;
+    private float horizontalInput;
+    private float verticalInput;
+
+    // ROS topics
+    private string cmdVelTopic = "/cmd_vel";
+    private string laserScanTopic = "/scan";
+
+    void Start()
+    {
+        // Initialize ROS connection
+        ros = ROSConnection.GetOrCreateInstance();
+        ros.RegisterPublisher<TwistMsg>(cmdVelTopic);
+
+        // Subscribe to ROS topics if needed
+        ros.Subscribe<LaserScanMsg>(laserScanTopic, OnLaserScanReceived);
+    }
+
+    void Update()
+    {
+        // Get input from Unity (for testing) or ROS
+        ProcessInput();
+
+        // Move the robot
+        MoveRobot();
+    }
+
+    void ProcessInput()
+    {
+        // In simulation, we might get commands from ROS
+        // For local testing, use Unity input
+        horizontalInput = Input.GetAxis("Horizontal");
+        verticalInput = Input.GetAxis("Vertical");
+    }
+
+    void MoveRobot()
+    {
+        // Apply movement based on input
+        Vector3 movement = new Vector3(horizontalInput, 0, verticalInput);
+        transform.Translate(movement * moveSpeed * Time.deltaTime);
+
+        // Rotate based on horizontal input
+        transform.Rotate(Vector3.up, horizontalInput * rotationSpeed * Time.deltaTime);
+    }
+
+    void OnLaserScanReceived(LaserScanMsg scan)
+    {
+        // Process laser scan data from ROS
+        Debug.Log($"Received laser scan with {scan.ranges.Length} points");
+    }
+
+    void OnApplicationQuit()
+    {
+        if (ros != null)
+        {
+            ros.Close();
+        }
+    }
+}
+```
+
+## Practical Lab / Simulation
+
+### Lab Exercise 1: Gazebo Environment Setup
+
+1. Install Gazebo Classic or Gazebo Garden/Harmonic
+2. Create a custom world file with humanoid robot and obstacles
+3. Launch Gazebo with your world:
+   ```bash
+   gazebo your_world_file.world
+   ```
+4. Spawn a humanoid robot model in the environment
+5. Test basic movement and sensor functionality
+
+### Lab Exercise 2: Unity-ROS Integration
+
+1. Set up Unity with Robotics Hub package
+2. Import Unity-Robotics-Hub assets
+3. Create a simple humanoid robot in Unity
+4. Implement ROS connection using the Unity ROS TCP Connector
+5. Test bidirectional communication between Unity and ROS 2
+
+### Lab Exercise 3: Sim2Real Transfer Challenge
+
+1. Train a simple locomotion controller in simulation
+2. Identify key differences between simulation and reality
+3. Implement domain randomization techniques to improve transfer
+4. Test the controller on a physical robot if available, or analyze transfer gap
+
+## Real-World Mapping
+
+### Industrial Applications
+- **Warehouse Robotics**: Simulation used to train navigation and manipulation skills before deployment
+- **Manufacturing**: Robots trained in simulation for assembly tasks before physical implementation
+- **Agriculture**: Autonomous vehicles tested in simulated environments representing various field conditions
+
+### Research Applications
+- **Boston Dynamics**: Extensive simulation training for complex locomotion behaviors
+- **OpenAI Robotics**: Simulation-based learning for dexterous manipulation tasks
+- **ETH Zurich**: Humanoid robot research using simulation for controller development
+
+### Key Success Factors
+- **Fidelity**: Simulation must capture relevant physical properties
+- **Variety**: Multiple scenarios needed for robust real-world performance
+- **Transfer Techniques**: Domain randomization, system identification, and adaptation methods
+- **Validation**: Systematic comparison between simulation and reality performance
+
+## Summary
+
+Module 2 introduces the critical role of simulation in Physical AI and humanoid robotics development. We've explored how Gazebo and Unity provide powerful platforms for creating virtual environments where robots can learn and refine behaviors safely. The Sim2Real challenge addresses the fundamental question of how to ensure behaviors learned in simulation transfer effectively to real-world physical systems. This module provides the foundation for understanding simulation environments that will be essential for developing and testing humanoid robots before real-world deployment.

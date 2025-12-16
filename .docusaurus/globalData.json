@@ -1,0 +1,127 @@
+{
+  "docusaurus-plugin-content-docs": {
+    "default": {
+      "path": "/docs",
+      "versions": [
+        {
+          "name": "current",
+          "label": "Next",
+          "isLast": true,
+          "path": "/docs",
+          "mainDocId": "modules/module-01-ros2/index",
+          "docs": [
+            {
+              "id": "modules/module-01-ros2/index",
+              "path": "/docs/modules/module-01-ros2/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "modules/module-01-ros2/nodes-topics-services",
+              "path": "/docs/modules/module-01-ros2/nodes-topics-services",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "modules/module-01-ros2/physical-ai-robotic-nervous-system",
+              "path": "/docs/modules/module-01-ros2/physical-ai-robotic-nervous-system",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "modules/module-01-ros2/python-agents-rclpy",
+              "path": "/docs/modules/module-01-ros2/python-agents-rclpy",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "modules/module-01-ros2/ros2-foundations",
+              "path": "/docs/modules/module-01-ros2/ros2-foundations",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "modules/module-02-gazebo-unity/gazebo-simulation",
+              "path": "/docs/modules/module-02-gazebo-unity/gazebo-simulation",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "modules/module-02-gazebo-unity/index",
+              "path": "/docs/modules/module-02-gazebo-unity/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "modules/module-02-gazebo-unity/physics-based-simulation",
+              "path": "/docs/modules/module-02-gazebo-unity/physics-based-simulation",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "modules/module-02-gazebo-unity/sim2real-transfer",
+              "path": "/docs/modules/module-02-gazebo-unity/sim2real-transfer",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "modules/module-02-gazebo-unity/unity-simulation",
+              "path": "/docs/modules/module-02-gazebo-unity/unity-simulation",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "modules/module-03-isaac/index",
+              "path": "/docs/modules/module-03-isaac/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "modules/module-03-isaac/isaac-manipulation",
+              "path": "/docs/modules/module-03-isaac/isaac-manipulation",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "modules/module-03-isaac/isaac-navigation",
+              "path": "/docs/modules/module-03-isaac/isaac-navigation",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "modules/module-03-isaac/isaac-ros",
+              "path": "/docs/modules/module-03-isaac/isaac-ros",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "modules/module-03-isaac/isaac-sim",
+              "path": "/docs/modules/module-03-isaac/isaac-sim",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "modules/module-04-vla-capstone/capstone-project",
+              "path": "/docs/modules/module-04-vla-capstone/capstone-project",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "modules/module-04-vla-capstone/conversational-robotics",
+              "path": "/docs/modules/module-04-vla-capstone/conversational-robotics",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "modules/module-04-vla-capstone/index",
+              "path": "/docs/modules/module-04-vla-capstone/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "modules/module-04-vla-capstone/vision-language-action",
+              "path": "/docs/modules/module-04-vla-capstone/vision-language-action",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "physical-ai-humanoid-robotics-summary",
+              "path": "/docs/physical-ai-humanoid-robotics-summary"
+            }
+          ],
+          "draftIds": [],
+          "sidebars": {
+            "tutorialSidebar": {
+              "link": {
+                "path": "/docs/modules/module-01-ros2/",
+                "label": "Overview"
+              }
+            }
+          }
+        }
+      ],
+      "breadcrumbs": true
+    }
+  }
+}

@@ -1,0 +1,681 @@
+---
+title: Lesson 3 - Python Agents with rclpy
+sidebar_label: Python Agents with rclpy
+---
+
+# Lesson 3: Python Agents with rclpy
+
+## Learning Objectives
+
+By the end of this lesson, you will be able to:
+- Create sophisticated Python agents using rclpy
+- Implement agent behaviors with state management
+- Design multi-threaded ROS 2 nodes for complex applications
+- Use ROS 2 parameters for agent configuration
+- Implement lifecycle management for robust agents
+- Apply design patterns for agent-based robotics
+
+## Physical AI Concept
+
+Python agents in ROS 2 represent autonomous entities that can perceive their environment, make decisions, and execute actions. These agents embody the principles of Physical AI by bridging the gap between high-level AI algorithms and low-level physical control. Through rclpy, agents can integrate perception, planning, and control in a cohesive manner, enabling complex behaviors that emerge from the interaction of multiple specialized components.
+
+Agent-based approaches in Physical AI provide:
+- **Autonomy**: Agents can operate independently with minimal human intervention
+- **Adaptability**: Agents can modify their behavior based on environmental conditions
+- **Scalability**: Multiple agents can coordinate to solve complex problems
+- **Robustness**: Failure of one agent doesn't necessarily compromise the entire system
+- **Intelligence**: Agents can incorporate learning, reasoning, and planning capabilities
+
+## System Architecture
+
+### Agent Architecture Pattern
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        Agent Node                                   │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐    │
+│  │   Perception    │  │   Decision      │  │   Action        │    │
+│  │   Component     │  │   Component     │  │   Component     │    │
+│  │  • Sensor       │  │  • State        │  │  • Motor        │    │
+│  │    Processing   │  │    Machine      │  │    Commands     │    │
+│  │  • Feature      │  │  • Planning     │  │  • Trajectory   │    │
+│  │    Extraction   │  │  • Learning     │  │    Execution    │    │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘    │
+│              │                    │                    │           │
+│              ▼                    ▼                    ▼           │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │                    Agent State                              │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │  │
+│  │  │   Goals     │  │  Internal   │  │  Behavior   │        │  │
+│  │  │             │  │   World     │  │   Modes     │        │  │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘        │  │
+│  └─────────────────────────────────────────────────────────────┘  │
+│                                     │                            │
+│                                     ▼                            │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │                  Communication Layer                        │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │  │
+│  │  │   Topics    │  │   Services  │  │  Actions    │        │  │
+│  │  │  • Publish  │  │  • Request  │  │  • Goals    │        │  │
+│  │  │  • Subscribe│  │  • Response │  │  • Feedback  │        │  │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘        │  │
+│  └─────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Multi-Agent Coordination
+
+```
+Agent Coordination Pattern:
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Navigation    │    │   Manipulation  │    │   Perception    │
+│   Agent         │    │   Agent         │    │   Agent         │
+│                 │    │                 │    │                 │
+│ • Path planning │◄──►│ • Grasping      │◄──►│ • Object        │
+│ • Obstacle      │    │ • Manipulation  │    │   Detection     │
+│   avoidance     │    │ • Tool use      │    │ • Scene         │
+│ • Localization  │    │ • Force control │    │   Understanding │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+                    ┌─────────────────┐
+                    │   Coordination  │
+                    │   Agent         │
+                    │  (Optional)     │
+                    │ • Task          │
+                    │   Scheduling    │
+                    │ • Resource      │
+                    │   Management    │
+                    └─────────────────┘
+```
+
+## Tools & Software
+
+This lesson uses:
+- **ROS 2 Humble Hawksbill** - Core framework
+- **rclpy** - Python client library for agent implementation
+- **Python 3.8+** - For agent logic and algorithms
+- **NumPy/SciPy** - For mathematical computations
+- **OpenCV** - For computer vision components
+- **Transforms3d** - For 3D transformations
+- **PyGame** - For simulation and visualization (optional)
+
+## Code / Configuration Examples
+
+### Basic Agent with State Management
+
+```python
+import rclpy
+from rclpy.node import Node
+from rclpy.qos import QoSProfile, ReliabilityPolicy
+from std_msgs.msg import String
+from geometry_msgs.msg import Twist
+from sensor_msgs.msg import LaserScan
+from nav_msgs.msg import Odometry
+import numpy as np
+import math
+from enum import Enum
+
+class AgentState(Enum):
+    IDLE = 1
+    EXPLORING = 2
+    NAVIGATING = 3
+    AVOIDING_OBSTACLE = 4
+    RECHARGING = 5
+
+class ExplorationAgent(Node):
+    def __init__(self):
+        super().__init__('exploration_agent')
+
+        # Agent state management
+        self.state = AgentState.IDLE
+        self.target_pose = None
+        self.current_pose = None
+        self.battery_level = 100.0
+
+        # QoS profile for sensor data
+        qos_profile = QoSProfile(
+            depth=10,
+            reliability=ReliabilityPolicy.BEST_EFFORT
+        )
+
+        # Publishers and subscribers
+        self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
+        self.status_pub = self.create_publisher(String, '/agent/status', 10)
+
+        self.scan_sub = self.create_subscription(
+            LaserScan, '/scan', self.scan_callback, qos_profile
+        )
+        self.odom_sub = self.create_subscription(
+            Odometry, '/odom', self.odom_callback, qos_profile
+        )
+
+        # Timer for agent behavior loop
+        self.behavior_timer = self.create_timer(0.1, self.behavior_callback)
+
+        # Parameters for agent configuration
+        self.declare_parameter('safety_distance', 0.5)
+        self.declare_parameter('exploration_speed', 0.3)
+        self.declare_parameter('rotation_speed', 0.5)
+
+        self.get_logger().info('Exploration agent initialized')
+
+    def scan_callback(self, msg):
+        """Process laser scan data for obstacle detection"""
+        # Find minimum distance in front of robot
+        front_scan = msg.ranges[len(msg.ranges)//2 - 30 : len(msg.ranges)//2 + 30]
+        valid_ranges = [r for r in front_scan if not (math.isnan(r) or math.isinf(r))]
+
+        if valid_ranges:
+            min_distance = min(valid_ranges)
+            self.check_obstacle_proximity(min_distance)
+
+    def odom_callback(self, msg):
+        """Update current pose from odometry"""
+        self.current_pose = msg.pose.pose
+
+        # Simulate battery drain based on movement
+        if self.current_pose:
+            # In a real system, this would be based on actual power consumption
+            self.battery_level = max(0.0, self.battery_level - 0.001)
+
+    def check_obstacle_proximity(self, min_distance):
+        """Check if agent needs to avoid obstacles"""
+        safety_distance = self.get_parameter('safety_distance').value
+
+        if min_distance < safety_distance and self.state != AgentState.AVOIDING_OBSTACLE:
+            self.state = AgentState.AVOIDING_OBSTACLE
+            self.get_logger().info(f'Obstacle detected at {min_distance:.2f}m, switching to avoidance mode')
+
+    def behavior_callback(self):
+        """Main agent behavior loop"""
+        # Update agent status
+        status_msg = String()
+        status_msg.data = f'State: {self.state.name}, Battery: {self.battery_level:.1f}%'
+        self.status_pub.publish(status_msg)
+
+        # Execute behavior based on current state
+        if self.state == AgentState.IDLE:
+            self.handle_idle_state()
+        elif self.state == AgentState.EXPLORING:
+            self.handle_exploring_state()
+        elif self.state == AgentState.NAVIGATING:
+            self.handle_navigating_state()
+        elif self.state == AgentState.AVOIDING_OBSTACLE:
+            self.handle_avoiding_obstacle_state()
+        elif self.state == AgentState.RECHARGING:
+            self.handle_recharging_state()
+
+    def handle_idle_state(self):
+        """Handle idle state - look for exploration opportunities"""
+        # If battery is sufficient, start exploring
+        if self.battery_level > 20.0:
+            self.state = AgentState.EXPLORING
+            self.get_logger().info('Starting exploration')
+        else:
+            self.get_logger().info('Battery low, need to recharge')
+
+    def handle_exploring_state(self):
+        """Handle exploration state - move forward with obstacle avoidance"""
+        msg = Twist()
+
+        # Check if we need to avoid obstacles
+        if self.state == AgentState.AVOIDING_OBSTACLE:
+            return  # Let avoidance behavior take over
+
+        # Move forward at exploration speed
+        exploration_speed = self.get_parameter('exploration_speed').value
+        msg.linear.x = exploration_speed
+
+        # Publish movement command
+        self.cmd_vel_pub.publish(msg)
+
+    def handle_avoiding_obstacle_state(self):
+        """Handle obstacle avoidance behavior"""
+        msg = Twist()
+
+        # Rotate to avoid obstacle
+        rotation_speed = self.get_parameter('rotation_speed').value
+        msg.angular.z = rotation_speed
+
+        # Publish rotation command
+        self.cmd_vel_pub.publish(msg)
+
+        # Check if obstacle is cleared
+        # In a real implementation, this would check if the path is clear
+        # For simulation, we'll return to exploration after a short time
+        self.avoidance_timer = self.create_timer(2.0, self.clear_obstacle_avoidance)
+
+    def clear_obstacle_avoidance(self):
+        """Callback to clear obstacle avoidance state"""
+        self.state = AgentState.EXPLORING
+        self.destroy_timer(self.avoidance_timer)
+        self.get_logger().info('Obstacle avoided, resuming exploration')
+
+    def handle_recharging_state(self):
+        """Handle recharging state"""
+        # Stop movement
+        msg = Twist()
+        self.cmd_vel_pub.publish(msg)
+        self.get_logger().info('Recharging...')
+
+def main(args=None):
+    rclpy.init(args=args)
+    agent = ExplorationAgent()
+
+    try:
+        rclpy.spin(agent)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        agent.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Multi-Threaded Agent with Asynchronous Services
+
+```python
+import rclpy
+from rclpy.node import Node
+from rclpy.qos import QoSProfile
+from rclpy.executors import MultiThreadedExecutor
+from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
+from std_msgs.msg import String
+from example_interfaces.srv import Trigger
+import threading
+import time
+import queue
+from concurrent.futures import ThreadPoolExecutor
+
+class MultiThreadedAgent(Node):
+    def __init__(self):
+        super().__init__('multithreaded_agent')
+
+        # Create callback groups for thread safety
+        self.sensor_cb_group = MutuallyExclusiveCallbackGroup()
+        self.service_cb_group = MutuallyExclusiveCallbackGroup()
+        self.timer_cb_group = MutuallyExclusiveCallbackGroup()
+
+        # Publishers
+        self.status_pub = self.create_publisher(String, '/agent/multi_status', 10)
+
+        # Service server
+        self.task_service = self.create_service(
+            Trigger,
+            '/agent/execute_task',
+            self.execute_task_callback,
+            callback_group=self.service_cb_group
+        )
+
+        # Timer for background tasks
+        self.background_timer = self.create_timer(
+            1.0, self.background_task, callback_group=self.timer_cb_group
+        )
+
+        # Thread pool for background processing
+        self.executor_pool = ThreadPoolExecutor(max_workers=3)
+
+        # Shared data structures
+        self.task_queue = queue.Queue()
+        self.results_queue = queue.Queue()
+
+        # Agent state
+        self.is_processing = False
+
+        self.get_logger().info('Multi-threaded agent initialized')
+
+    def execute_task_callback(self, request, response):
+        """Service callback to execute tasks in background thread"""
+        self.get_logger().info('Received task request')
+
+        # Add task to queue for background processing
+        task_id = f"task_{int(time.time())}"
+        self.task_queue.put(task_id)
+
+        # Start background processing if not already running
+        if not self.is_processing:
+            self.executor_pool.submit(self.process_tasks)
+            self.is_processing = True
+
+        response.success = True
+        response.message = f'Task {task_id} queued for processing'
+        return response
+
+    def process_tasks(self):
+        """Background thread to process tasks"""
+        while not self.task_queue.empty():
+            try:
+                task_id = self.task_queue.get_nowait()
+                self.get_logger().info(f'Processing task: {task_id}')
+
+                # Simulate task processing
+                time.sleep(2)  # Simulate processing time
+
+                # Process the task (in a real system, this would do actual work)
+                result = self.perform_task(task_id)
+
+                # Put result in results queue
+                self.results_queue.put((task_id, result))
+
+                # Update status
+                status_msg = String()
+                status_msg.data = f'Task {task_id} completed with result: {result}'
+                self.status_pub.publish(status_msg)
+
+            except queue.Empty:
+                break
+            except Exception as e:
+                self.get_logger().error(f'Error processing task: {str(e)}')
+
+        self.is_processing = False
+
+    def perform_task(self, task_id):
+        """Perform the actual task work"""
+        # Simulate different types of tasks
+        if 'task_' in task_id:
+            # Simulate some computation
+            import random
+            result = f"processed_{random.randint(1, 100)}"
+            return result
+
+    def background_task(self):
+        """Background task running in main thread"""
+        # Check for completed tasks and process results
+        while not self.results_queue.empty():
+            try:
+                task_id, result = self.results_queue.get_nowait()
+                self.get_logger().info(f'Background: Task {task_id} result: {result}')
+            except queue.Empty:
+                break
+
+def main(args=None):
+    rclpy.init(args=args)
+
+    # Create agent
+    agent = MultiThreadedAgent()
+
+    # Create multi-threaded executor
+    executor = MultiThreadedExecutor(num_threads=4)
+    executor.add_node(agent)
+
+    try:
+        executor.spin()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        agent.executor_pool.shutdown(wait=True)
+        agent.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Agent with Parameters and Configuration
+
+```python
+import rclpy
+from rclpy.node import Node
+from rclpy.qos import QoSProfile
+from std_msgs.msg import String
+from geometry_msgs.msg import Twist
+from sensor_msgs.msg import LaserScan
+import math
+
+class ConfigurableAgent(Node):
+    def __init__(self):
+        super().__init__('configurable_agent')
+
+        # Declare parameters with defaults
+        self.declare_parameter('agent_name', 'default_agent')
+        self.declare_parameter('movement_speed', 0.5)
+        self.declare_parameter('rotation_speed', 0.8)
+        self.declare_parameter('safety_distance', 0.6)
+        self.declare_parameter('exploration_pattern', 'spiral')  # spiral, grid, random
+        self.declare_parameter('battery_threshold', 20.0)
+        self.declare_parameter('communication_timeout', 5.0)
+
+        # Get parameter values
+        self.agent_name = self.get_parameter('agent_name').value
+        self.movement_speed = self.get_parameter('movement_speed').value
+        self.rotation_speed = self.get_parameter('rotation_speed').value
+        self.safety_distance = self.get_parameter('safety_distance').value
+        self.exploration_pattern = self.get_parameter('exploration_pattern').value
+        self.battery_threshold = self.get_parameter('battery_threshold').value
+        self.comm_timeout = self.get_parameter('communication_timeout').value
+
+        # Publishers and subscribers
+        self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
+        self.status_pub = self.create_publisher(String, '/agent/config_status', 10)
+
+        self.scan_sub = self.create_subscription(
+            LaserScan, '/scan', self.scan_callback, QoSProfile(depth=10)
+        )
+
+        # Timer for behavior
+        self.behavior_timer = self.create_timer(0.1, self.behavior_callback)
+
+        # Parameter callback
+        self.add_on_set_parameters_callback(self.parameter_callback)
+
+        # Agent state
+        self.min_scan_distance = float('inf')
+        self.last_communication_time = self.get_clock().now().nanoseconds / 1e9
+
+        self.get_logger().info(f'Configurable agent "{self.agent_name}" initialized')
+
+    def parameter_callback(self, params):
+        """Callback for parameter changes"""
+        for param in params:
+            if param.name == 'movement_speed':
+                self.movement_speed = param.value
+                self.get_logger().info(f'Movement speed updated to {self.movement_speed}')
+            elif param.name == 'safety_distance':
+                self.safety_distance = param.value
+                self.get_logger().info(f'Safety distance updated to {self.safety_distance}')
+            elif param.name == 'exploration_pattern':
+                self.exploration_pattern = param.value
+                self.get_logger().info(f'Exploration pattern updated to {self.exploration_pattern}')
+
+        return SetParametersResult(successful=True)
+
+    def scan_callback(self, msg):
+        """Process laser scan data"""
+        # Calculate minimum distance in front
+        front_ranges = msg.ranges[len(msg.ranges)//2 - 20 : len(msg.ranges)//2 + 20]
+        valid_ranges = [r for r in front_ranges if not (math.isnan(r) or math.isinf(r))]
+
+        if valid_ranges:
+            self.min_scan_distance = min(valid_ranges)
+        else:
+            self.min_scan_distance = float('inf')
+
+    def behavior_callback(self):
+        """Main behavior based on current configuration"""
+        # Update communication time
+        current_time = self.get_clock().now().nanoseconds / 1e9
+
+        # Publish status
+        status_msg = String()
+        status_msg.data = f'Agent: {self.agent_name}, Distance: {self.min_scan_distance:.2f}m, Pattern: {self.exploration_pattern}'
+        self.status_pub.publish(status_msg)
+
+        # Execute behavior based on current configuration
+        if self.min_scan_distance < self.safety_distance:
+            self.execute_avoidance_behavior()
+        else:
+            self.execute_exploration_behavior()
+
+    def execute_avoidance_behavior(self):
+        """Execute obstacle avoidance based on current configuration"""
+        cmd = Twist()
+
+        # Rotate away from obstacle
+        cmd.angular.z = self.rotation_speed
+        cmd.linear.x = 0.0  # Stop forward movement
+
+        self.cmd_vel_pub.publish(cmd)
+        self.get_logger().debug('Executing avoidance behavior')
+
+    def execute_exploration_behavior(self):
+        """Execute exploration based on configured pattern"""
+        cmd = Twist()
+
+        if self.exploration_pattern == 'spiral':
+            # Spiral pattern: forward movement with slow rotation
+            cmd.linear.x = self.movement_speed
+            cmd.angular.z = self.rotation_speed * 0.3
+        elif self.exploration_pattern == 'grid':
+            # Grid pattern: straight line until boundary detected
+            cmd.linear.x = self.movement_speed
+            cmd.angular.z = 0.0
+        elif self.exploration_pattern == 'random':
+            # Random pattern: random movement
+            import random
+            cmd.linear.x = self.movement_speed * random.uniform(0.5, 1.0)
+            cmd.angular.z = self.rotation_speed * random.uniform(-0.5, 0.5)
+        else:
+            # Default to spiral
+            cmd.linear.x = self.movement_speed
+            cmd.angular.z = self.rotation_speed * 0.3
+
+        self.cmd_vel_pub.publish(cmd)
+
+def main(args=None):
+    rclpy.init(args=args)
+    agent = ConfigurableAgent()
+
+    try:
+        rclpy.spin(agent)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        agent.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+## Practical Lab / Simulation
+
+### Lab Exercise 1: Basic Agent Implementation
+
+1. Create a new ROS 2 package for the agent examples:
+   ```bash
+   cd ~/ros2_ws/src
+   ros2 pkg create --build-type ament_python agent_tutorial
+   ```
+
+2. Implement the ExplorationAgent from the first example in `agent_tutorial/exploration_agent.py`
+
+3. Add the necessary dependencies to `setup.py`:
+   ```python
+   install_requires=['setuptools', 'numpy'],
+   ```
+
+4. Build and run the agent:
+   ```bash
+   cd ~/ros2_ws
+   colcon build --packages-select agent_tutorial
+   source install/setup.bash
+   ros2 run agent_tutorial exploration_agent
+   ```
+
+5. Monitor the agent's behavior:
+   ```bash
+   # View status messages
+   ros2 topic echo /agent/status
+
+   # View movement commands
+   ros2 topic echo /cmd_vel
+   ```
+
+6. Experiment with different parameters by setting them at runtime:
+   ```bash
+   ros2 param set /exploration_agent safety_distance 0.8
+   ros2 param set /exploration_agent exploration_speed 0.2
+   ```
+
+### Lab Exercise 2: Multi-Threaded Agent
+
+1. Implement the MultiThreadedAgent example in `agent_tutorial/multithreaded_agent.py`
+
+2. Test the service interface:
+   ```bash
+   # In one terminal, run the agent
+   ros2 run agent_tutorial multithreaded_agent
+
+   # In another terminal, call the service
+   ros2 service call /agent/execute_task example_interfaces/srv/Trigger
+   ```
+
+3. Monitor the status topic to see task completion:
+   ```bash
+   ros2 topic echo /agent/multi_status
+   ```
+
+### Lab Exercise 3: Configurable Agent
+
+1. Implement the ConfigurableAgent example in `agent_tutorial/configurable_agent.py`
+
+2. Test parameter reconfiguration:
+   ```bash
+   # Run the agent
+   ros2 run agent_tutorial configurable_agent
+
+   # Change parameters during runtime
+   ros2 param set /configurable_agent exploration_pattern grid
+   ros2 param set /configurable_agent movement_speed 0.7
+   ros2 param set /configurable_agent safety_distance 0.4
+   ```
+
+3. Use rqt to visualize the parameter changes:
+   ```bash
+   rqt
+   # Add the "Dynamic Reconfigure" plugin to change parameters graphically
+   ```
+
+### Lab Exercise 4: Agent Coordination
+
+1. Create two agents that coordinate with each other:
+   - A "scout" agent that explores and reports obstacles
+   - A "follower" agent that follows the scout but avoids obstacles
+
+2. Implement communication between agents using topics:
+   - Scout publishes obstacle locations
+   - Follower subscribes to obstacle locations and adjusts path accordingly
+
+3. Test the coordination in simulation (using Gazebo or a similar environment)
+
+## Real-World Mapping
+
+### Industrial Applications
+- **Warehouse Automation**: Multiple exploration agents coordinate to map warehouse layouts and optimize pick paths
+- **Quality Control**: Inspection agents use computer vision to identify defects and coordinate with corrective action agents
+- **Predictive Maintenance**: Monitoring agents continuously assess equipment health and coordinate with maintenance scheduling agents
+
+### Service Robotics
+- **Hospital Robots**: Navigation agents coordinate with task execution agents to deliver supplies while avoiding obstacles and people
+- **Retail Assistants**: Customer service agents coordinate with inventory agents to provide accurate product location information
+- **Cleaning Robots**: Coverage agents coordinate to ensure complete area cleaning while avoiding each other
+
+### Research Platforms
+- **Swarm Robotics**: Simple agents follow local rules but exhibit complex emergent behaviors through coordination
+- **Human-Robot Interaction**: Social agents coordinate with perception and action agents to provide natural interaction
+- **Multi-Robot Systems**: Agents coordinate for complex tasks like search and rescue or construction
+
+### Key Design Patterns
+- **Behavior Trees**: Hierarchical task execution for complex agent behaviors
+- **Finite State Machines**: Clear state transitions for predictable agent behavior
+- **Blackboard Architecture**: Shared knowledge repository for multi-agent coordination
+- **Reactive Systems**: Immediate response to environmental changes
+- **Deliberative Systems**: Planning-based decision making for complex tasks
+
+## Summary
+
+Lesson 3 has covered the implementation of sophisticated Python agents using rclpy, focusing on state management, multi-threading, and configuration. We've explored how agents can embody the principles of Physical AI by bridging high-level intelligence with low-level physical control. The examples demonstrated various agent architectures, from simple exploration agents with state machines to complex multi-threaded systems with dynamic configuration. The lab exercises provide hands-on experience with creating and coordinating agents, while the real-world mapping section illustrates how these concepts apply to actual robotic applications. This foundation enables the development of intelligent, autonomous robotic systems capable of complex behaviors in physical environments.

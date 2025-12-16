@@ -1,0 +1,442 @@
+/**
+ * Copyright (c) 2017-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: #0ea5e9; /* neon blue */
+  --ifm-color-primary-dark: #0284c7;
+  --ifm-color-primary-darker: #0369a1;
+  --ifm-color-primary-darkest: #0c4a6e;
+  --ifm-color-primary-light: #38bdf8;
+  --ifm-color-primary-lighter: #7dd3fc;
+  --ifm-color-primary-lightest: #bae6fd;
+  --ifm-code-font-size: 95%;
+
+  /* AI/Robotics theme colors */
+  --ai-primary: #0ea5e9; /* neon blue */
+  --ai-secondary: #06b6d4; /* cyan */
+  --ai-accent: #a78bfa; /* soft purple */
+  --ai-bg: #0f172a; /* dark background */
+  --ai-text: #e2e8f0; /* light text */
+  --ai-card-bg: #1e293b; /* card background */
+  --ai-border: #334155; /* border color */
+  --ai-highlight: #0891b2; /* highlight color */
+}
+
+html[data-theme='dark'] {
+  :root {
+    --ifm-color-primary: #0ea5e9;
+    --ifm-color-primary-dark: #0284c7;
+    --ifm-color-primary-darker: #0369a1;
+    --ifm-color-primary-darkest: #0c4a6e;
+    --ifm-color-primary-light: #38bdf8;
+    --ifm-color-primary-lighter: #7dd3fc;
+    --ifm-color-primary-lightest: #bae6fd;
+
+    /* Dark theme AI/Robotics colors */
+    --ai-bg: #0f172a;
+    --ai-text: #e2e8f0;
+    --ai-card-bg: #1e293b;
+    --ai-border: #334155;
+  }
+}
+
+.docusaurus-highlight-code-line {
+  background-color: rgba(0, 0, 0, 0.1);
+  display: block;
+  margin: 0 calc(-1 * var(--ifm-pre-padding));
+  padding: 0 var(--ifm-pre-padding);
+}
+
+html[data-theme='dark'] .docusaurus-highlight-code-line {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Custom header styling for AI/Robotics theme */
+.navbar {
+  background: linear-gradient(135deg, var(--ai-primary) 0%, var(--ai-accent) 100%);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--ai-border);
+}
+
+/* Custom hero banner for Physical AI */
+.hero-banner {
+  background: linear-gradient(135deg, var(--ai-primary) 0%, var(--ai-secondary) 100%);
+  color: white;
+  padding: 4rem 0;
+  text-align: center;
+  border-bottom-left-radius: 80px 20px;
+  border-bottom-right-radius: 80px 20px;
+  margin-bottom: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-banner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, transparent 0%, rgba(10, 14, 23, 0.7) 100%);
+  pointer-events: none;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  opacity: 0.9;
+  max-width: 800px;
+  margin: 0 auto 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Three boxes section */
+.three-boxes-section {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 4rem 0;
+  flex-wrap: wrap;
+}
+
+.three-boxes-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.box {
+  background: var(--ai-card-bg);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--ai-border);
+  flex: 1;
+  min-width: 250px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--ai-primary), var(--ai-secondary));
+}
+
+.box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.box-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--ai-primary);
+}
+
+.box-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--ai-text);
+}
+
+.box-description {
+  color: var(--ifm-font-color-secondary);
+  line-height: 1.6;
+}
+
+/* AI/Robotics-themed sidebar */
+.menu__list-item-collapsible:hover {
+  background-color: rgba(14, 165, 233, 0.1);
+}
+
+/* Custom footer styling */
+.footer {
+  background: var(--ai-bg);
+  border-top: 1px solid var(--ai-border);
+}
+
+/* Chapter header buttons */
+.chapter-header-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.chapter-header-btn {
+  background: linear-gradient(135deg, var(--ai-primary) 0%, var(--ai-accent) 100%);
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.chapter-header-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.15);
+}
+
+.chapter-header-btn:active {
+  transform: translateY(0);
+}
+
+/* Floating RAG Chatbot Widget */
+.floating-chatbot {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1000;
+}
+
+.chatbot-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ai-primary) 0%, var(--ai-accent) 100%);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  font-size: 1.5rem;
+}
+
+.chatbot-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.chatbot-drawer {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  width: 400px;
+  height: 600px;
+  background: var(--ai-card-bg);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--ai-border);
+  transform: translateY(20px);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.chatbot-drawer.open {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+.chatbot-header {
+  background: linear-gradient(135deg, var(--ai-primary) 0%, var(--ai-accent) 100%);
+  padding: 1rem;
+  color: white;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chatbot-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.chatbot-messages {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.chatbot-input-area {
+  padding: 1rem;
+  border-top: 1px solid var(--ai-border);
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chatbot-input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid var(--ai-border);
+  border-radius: 8px;
+  background: var(--ai-bg);
+  color: var(--ai-text);
+}
+
+.chatbot-send {
+  background: var(--ai-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+}
+
+.chatbot-message {
+  max-width: 80%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  line-height: 1.5;
+}
+
+.chatbot-message.user {
+  align-self: flex-end;
+  background: var(--ai-primary);
+  color: white;
+}
+
+.chatbot-message.bot {
+  align-self: flex-start;
+  background: var(--ai-card-bg);
+  border: 1px solid var(--ai-border);
+  color: var(--ai-text);
+}
+
+/* Typography improvements */
+.markdown {
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+/* Container for wider reading layout */
+.container {
+  max-width: 1200px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .three-boxes-section {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .box {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .floating-chatbot {
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .chatbot-drawer {
+    width: 300px;
+    height: 400px;
+    bottom: 60px;
+  }
+
+  .chapter-header-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .chapter-header-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Custom button styling */
+.button--primary {
+  background-color: var(--ai-primary);
+  border-color: var(--ai-primary);
+}
+
+.button--primary:hover {
+  background-color: var(--ai-highlight);
+  border-color: var(--ai-highlight);
+}
+
+/* Code block styling */
+.codeBlockContainer_node_modules-\@docusaurus-theme-classic-lib-next-theme-CodeBlock-styles-module {
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--ai-card-bg);
+}
+
+/* Table styling */
+.table-markdown-style {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+  background: var(--ai-card-bg);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table-markdown-style th,
+.table-markdown-style td {
+  border: 1px solid var(--ai-border);
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.table-markdown-style th {
+  background: linear-gradient(135deg, var(--ai-primary), var(--ai-highlight));
+  color: white;
+  font-weight: 600;
+}
+
+/* Improved sidebar styling */
+.sidebar {
+  background: var(--ai-card-bg);
+  border-right: 1px solid var(--ai-border);
+}
+
+/* Search bar styling */
+.search-bar {
+  background: var(--ai-card-bg);
+  border: 1px solid var(--ai-border);
+  border-radius: 8px;
+  color: var(--ai-text);
+}

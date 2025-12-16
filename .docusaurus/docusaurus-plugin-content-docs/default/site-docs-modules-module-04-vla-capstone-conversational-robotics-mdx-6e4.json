@@ -1,0 +1,27 @@
+{
+  "id": "modules/module-04-vla-capstone/conversational-robotics",
+  "title": "Chapter 2 - Conversational Robotics",
+  "description": "Learning Objectives",
+  "source": "@site/docs/modules/module-04-vla-capstone/conversational-robotics.mdx",
+  "sourceDirName": "modules/module-04-vla-capstone",
+  "slug": "/modules/module-04-vla-capstone/conversational-robotics",
+  "permalink": "/docs/modules/module-04-vla-capstone/conversational-robotics",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/modules/module-04-vla-capstone/conversational-robotics.mdx",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Chapter 2 - Conversational Robotics",
+    "sidebar_label": "Conversational Robotics"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Capstone Project",
+    "permalink": "/docs/modules/module-04-vla-capstone/capstone-project"
+  },
+  "next": {
+    "title": "Vision-Language-Action",
+    "permalink": "/docs/modules/module-04-vla-capstone/vision-language-action"
+  }
+}

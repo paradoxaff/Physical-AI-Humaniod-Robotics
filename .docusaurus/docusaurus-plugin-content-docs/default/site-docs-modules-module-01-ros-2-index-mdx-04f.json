@@ -1,0 +1,23 @@
+{
+  "id": "modules/module-01-ros2/index",
+  "title": "Module 1 - The Robotic Nervous System (ROS 2)",
+  "description": "Learning Objectives",
+  "source": "@site/docs/modules/module-01-ros2/index.mdx",
+  "sourceDirName": "modules/module-01-ros2",
+  "slug": "/modules/module-01-ros2/",
+  "permalink": "/docs/modules/module-01-ros2/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/modules/module-01-ros2/index.mdx",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Module 1 - The Robotic Nervous System (ROS 2)",
+    "sidebar_label": "Overview"
+  },
+  "sidebar": "tutorialSidebar",
+  "next": {
+    "title": "Nodes, Topics, and Services",
+    "permalink": "/docs/modules/module-01-ros2/nodes-topics-services"
+  }
+}

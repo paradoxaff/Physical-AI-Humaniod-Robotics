@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Robot body -->
+  <rect x="30" y="30" width="40" height="40" rx="5" fill="#00f7ff" opacity="0.8"/>
+
+  <!-- Robot head -->
+  <rect x="35" y="15" width="30" height="20" rx="3" fill="#a78bfa"/>
+
+  <!-- Robot eyes -->
+  <circle cx="42" cy="25" r="3" fill="#1e293b"/>
+  <circle cx="58" cy="25" r="3" fill="#1e293b"/>
+
+  <!-- Robot antenna -->
+  <line x1="50" y1="15" x2="50" y2="5" stroke="#00f7ff" stroke-width="2"/>
+  <circle cx="50" cy="3" r="2" fill="#a78bfa"/>
+
+  <!-- Decorative elements -->
+  <rect x="35" y="45" width="5" height="5" rx="1" fill="#1e293b"/>
+  <rect x="60" y="45" width="5" height="5" rx="1" fill="#1e293b"/>
+  <rect x="45" y="55" width="10" height="3" rx="1" fill="#1e293b"/>
+
+  <!-- Arms -->
+  <line x1="30" y1="40" x2="20" y2="40" stroke="#00f7ff" stroke-width="3"/>
+  <line x1="70" y1="40" x2="80" y2="40" stroke="#00f7ff" stroke-width="3"/>
+
+  <!-- Legs -->
+  <line x1="40" y1="70" x2="40" y2="80" stroke="#a78bfa" stroke-width="3"/>
+  <line x1="60" y1="70" x2="60" y2="80" stroke="#a78bfa" stroke-width="3"/>
+</svg>

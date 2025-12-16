@@ -1,0 +1,27 @@
+{
+  "id": "modules/module-02-gazebo-unity/index",
+  "title": "Module 2 - Simulation Environments (Gazebo & Unity)",
+  "description": "Learning Objectives",
+  "source": "@site/docs/modules/module-02-gazebo-unity/index.mdx",
+  "sourceDirName": "modules/module-02-gazebo-unity",
+  "slug": "/modules/module-02-gazebo-unity/",
+  "permalink": "/docs/modules/module-02-gazebo-unity/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/modules/module-02-gazebo-unity/index.mdx",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Module 2 - Simulation Environments (Gazebo & Unity)",
+    "sidebar_label": "Overview"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "ROS 2 Foundations",
+    "permalink": "/docs/modules/module-01-ros2/ros2-foundations"
+  },
+  "next": {
+    "title": "Gazebo Simulation",
+    "permalink": "/docs/modules/module-02-gazebo-unity/gazebo-simulation"
+  }
+}

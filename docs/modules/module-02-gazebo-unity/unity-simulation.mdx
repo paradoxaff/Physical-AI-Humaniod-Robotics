@@ -1,0 +1,546 @@
+---
+title: Chapter 2 - Unity Simulation
+sidebar_label: Unity Simulation
+---
+
+# Chapter 2: Unity Simulation
+
+## Learning Objectives
+
+By the end of this chapter, you will be able to:
+- Set up Unity with Robotics Hub for robot simulation
+- Create humanoid robot models and environments in Unity
+- Implement physics-based simulation with realistic dynamics
+- Integrate Unity with ROS 2 using the Unity ROS TCP Connector
+- Design immersive virtual environments for humanoid robot training
+- Apply domain randomization techniques to improve Sim2Real transfer
+
+## Physical AI Concept
+
+Unity provides a powerful 3D simulation environment that excels in creating visually rich, immersive virtual worlds for Physical AI systems. For humanoid robotics, Unity's advanced rendering capabilities and flexible physics engine enable the creation of realistic environments that closely resemble real-world scenarios. Unity's strength lies in its ability to create diverse, visually complex environments with high-quality graphics that can be used for training perception systems and testing robot behaviors in photorealistic settings.
+
+Unity's role in Physical AI includes:
+- **Visual Realism**: High-quality rendering for training computer vision systems
+- **Environment Diversity**: Creation of varied scenarios for robust robot training
+- **Physics Simulation**: Realistic physics for testing robot interactions
+- **User Interaction**: Intuitive interface for designing and testing robot behaviors
+- **Scalability**: Cloud deployment options for large-scale simulation training
+
+## System Architecture
+
+### Unity-ROS Integration Architecture
+
+```
+Unity-ROS Integration System:
+┌─────────────────────────────────────────────────────────────────────┐
+│                        Unity Engine                                 │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐    │
+│  │   Rendering     │  │   Physics       │  │   Input/Output  │    │
+│  │   Engine        │  │   Engine        │  │   Management    │    │
+│  │  • High-quality │  │  • PhysX       │  │  • Keyboard/    │    │
+│  │  • Real-time    │  │  • Collision   │  │    Mouse       │    │
+│  │  • Lighting     │  │  • Constraints │  │  • VR/AR       │    │
+│  │  • Materials    │  │  • Joints      │  │  • Gamepads    │    │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘    │
+│              │                    │                    │           │
+│              ▼                    ▼                    ▼           │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │              Unity Robotics Components                      │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │  │
+│  │  │  ROS TCP    │  │  Robotics   │  │  Simulation │        │  │
+│  │  │  Connector  │  │  Hub        │  │  Assets     │        │  │
+│  │  │  • Publishers│  │  • URDF     │  │  • Humanoid │        │  │
+│  │  │  • Subscribers│ │  Importer   │  │    Models   │        │  │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘        │  │
+│  └─────────────────────────────────────────────────────────────┘  │
+│                                     │                            │
+│                                     ▼                            │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │                   ROS 2 Ecosystem                           │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │  │
+│  │  │   Robot     │  │  Planning   │  │  Perception  │        │  │
+│  │  │   Control   │  │  & Navigation│  │  & Learning │        │  │
+│  │  │  Nodes      │  │  Nodes      │  │  Nodes      │        │  │
+│  │  │  • Balance  │  │  • Path     │  │  • Vision   │        │  │
+│  │  │  • Locomotion│ │  Planning   │  │  Processing │        │  │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘        │  │
+│  └─────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Unity Simulation Pipeline
+
+```
+Simulation Training Pipeline:
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Environment   │    │    Training     │    │   Transfer      │
+│   Generation    │───▶│    Process      │───▶│   Validation    │
+│  • Procedural   │    │  • Multiple    │    │  • Performance  │
+│    Generation  │    │    Episodes     │    │    Metrics     │
+│  • Domain      │    │  • Reward      │    │  • Reality Gap  │
+│    Randomization│    │    Shaping     │    │    Analysis    │
+│  • Scene       │    │  • Curriculum  │    │  • Adaptation  │
+│    Variation   │    │    Learning    │    │    Strategies   │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+## Tools & Software
+
+This chapter uses:
+- **Unity 2021.3 LTS or later** - Core 3D development platform
+- **Unity Robotics Hub** - Package for robotics simulation
+- **Unity ROS TCP Connector** - Bridge between Unity and ROS 2
+- **URDF Importer** - Tool for importing ROS robot models
+- **ML-Agents Toolkit** - For reinforcement learning in Unity
+- **ROS 2 Humble Hawksbill** - Integration with robot control
+- **NVIDIA Omniverse** - Advanced simulation (optional)
+
+## Code / Configuration Examples
+
+### Unity Robot Controller Script
+```csharp
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Unity.Robotics.ROSTCPConnector;
+using RosMessageTypes.Geometry;
+using RosMessageTypes.Std;
+using RosMessageTypes.Sensor;
+
+public class UnityHumanoidController : MonoBehaviour
+{
+    [Header("Robot Configuration")]
+    public float moveSpeed = 2.0f;
+    public float rotationSpeed = 50.0f;
+    public float jumpForce = 5.0f;
+
+    [Header("ROS Connection")]
+    public string robotName = "unity_humanoid";
+
+    [Header("Joint Configuration")]
+    public Transform head;
+    public Transform leftArm;
+    public Transform rightArm;
+    public Transform leftLeg;
+    public Transform rightLeg;
+
+    private ROSConnection ros;
+    private Rigidbody rb;
+    private bool isGrounded = true;
+
+    // ROS topics
+    private string cmdVelTopic = "/cmd_vel";
+    private string jointStatesTopic = "/joint_states";
+    private string imuTopic = "/imu/data";
+
+    void Start()
+    {
+        // Initialize components
+        rb = GetComponent<Rigidbody>();
+        if (rb == null)
+        {
+            rb = gameObject.AddComponent<Rigidbody>();
+        }
+
+        // Initialize ROS connection
+        ros = ROSConnection.GetOrCreateInstance();
+        ros.RegisterPublisher<TwistMsg>(cmdVelTopic);
+        ros.RegisterPublisher<ImuMsg>(imuTopic);
+
+        // Subscribe to ROS topics
+        ros.Subscribe<TwistMsg>(cmdVelTopic, OnCmdVelReceived);
+
+        Debug.Log($"Unity humanoid controller initialized for {robotName}");
+    }
+
+    void Update()
+    {
+        // Send IMU data periodically
+        if (Time.time % 0.1f < Time.deltaTime) // Every 0.1 seconds
+        {
+            PublishImuData();
+        }
+    }
+
+    void FixedUpdate()
+    {
+        // Process physics-based movement
+        ProcessMovement();
+    }
+
+    void OnCmdVelReceived(TwistMsg cmdVel)
+    {
+        // Apply linear velocity from ROS command
+        Vector3 linearVelocity = new Vector3((float)cmdVel.linear.x, 0, (float)cmdVel.linear.y);
+        rb.velocity = linearVelocity * moveSpeed;
+
+        // Apply angular velocity for rotation
+        float angularVelocity = (float)cmdVel.angular.z;
+        transform.Rotate(Vector3.up, angularVelocity * rotationSpeed * Time.fixedDeltaTime);
+    }
+
+    void ProcessMovement()
+    {
+        // Ground check for humanoid locomotion
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, 1.1f))
+        {
+            isGrounded = true;
+        }
+        else
+        {
+            isGrounded = false;
+        }
+
+        // Apply jump if commanded (simplified)
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        {
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        }
+    }
+
+    void PublishImuData()
+    {
+        if (ros == null) return;
+
+        // Create IMU message
+        var imuMsg = new ImuMsg();
+        imuMsg.header = new HeaderMsg();
+        imuMsg.header.stamp = new TimeStamp(ROSConnection.GetNodeHandle().GetClock().Now().Secs,
+                                           ROSConnection.GetNodeHandle().GetClock().Now().Nanos);
+        imuMsg.header.frame_id = "imu_link";
+
+        // Fill in orientation (simplified)
+        imuMsg.orientation.x = transform.rotation.x;
+        imuMsg.orientation.y = transform.rotation.y;
+        imuMsg.orientation.z = transform.rotation.z;
+        imuMsg.orientation.w = transform.rotation.w;
+
+        // Fill in angular velocity (simplified)
+        imuMsg.angular_velocity.x = rb.angularVelocity.x;
+        imuMsg.angular_velocity.y = rb.angularVelocity.y;
+        imuMsg.angular_velocity.z = rb.angularVelocity.z;
+
+        // Fill in linear acceleration (simplified)
+        imuMsg.linear_acceleration.x = rb.velocity.x;
+        imuMsg.linear_acceleration.y = rb.velocity.y;
+        imuMsg.linear_acceleration.z = rb.velocity.z;
+
+        // Publish IMU message
+        ros.Publish(imuTopic, imuMsg);
+    }
+
+    void OnApplicationQuit()
+    {
+        if (ros != null)
+        {
+            ros.Close();
+        }
+    }
+}
+```
+
+### Unity Environment Manager Script
+```csharp
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Unity.Robotics.ROSTCPConnector;
+using RosMessageTypes.Std;
+
+public class UnityEnvironmentManager : MonoBehaviour
+{
+    [Header("Environment Configuration")]
+    public float simulationSpeed = 1.0f;
+    public bool enableDomainRandomization = true;
+    public int seed = 0;
+
+    [Header("Randomization Parameters")]
+    public float minLightIntensity = 0.5f;
+    public float maxLightIntensity = 2.0f;
+    public Color[] possibleGroundColors;
+
+    private ROSConnection ros;
+    private List<Renderer> randomizedObjects = new List<Renderer>();
+
+    void Start()
+    {
+        // Initialize ROS connection
+        ros = ROSConnection.GetOrCreateInstance();
+
+        // Initialize randomization
+        if (enableDomainRandomization)
+        {
+            Random.InitState(seed);
+            SetupRandomization();
+        }
+
+        Debug.Log("Unity environment manager initialized");
+    }
+
+    void SetupRandomization()
+    {
+        // Find all objects that can be randomized
+        Renderer[] renderers = FindObjectsOfType<Renderer>();
+        foreach (Renderer r in renderers)
+        {
+            randomizedObjects.Add(r);
+        }
+
+        Debug.Log($"Found {randomizedObjects.Count} objects for randomization");
+    }
+
+    public void RandomizeEnvironment()
+    {
+        if (!enableDomainRandomization) return;
+
+        // Randomize lighting
+        Light[] lights = FindObjectsOfType<Light>();
+        foreach (Light light in lights)
+        {
+            light.intensity = Random.Range(minLightIntensity, maxLightIntensity);
+        }
+
+        // Randomize object materials
+        foreach (Renderer renderer in randomizedObjects)
+        {
+            if (renderer.material != null)
+            {
+                // Randomize color
+                if (possibleGroundColors.Length > 0)
+                {
+                    Color randomColor = possibleGroundColors[Random.Range(0, possibleGroundColors.Length)];
+                    renderer.material.color = randomColor;
+                }
+
+                // Randomize other properties as needed
+                float randomScale = Random.Range(0.8f, 1.2f);
+                renderer.transform.localScale = Vector3.one * randomScale;
+            }
+        }
+
+        Debug.Log("Environment randomized");
+    }
+
+    void Update()
+    {
+        // Periodically randomize environment if enabled
+        if (enableDomainRandomization && Time.time % 5.0f < Time.deltaTime) // Every 5 seconds
+        {
+            RandomizeEnvironment();
+        }
+    }
+
+    public void ResetEnvironment()
+    {
+        // Reset environment to initial state
+        Random.InitState(seed);
+        SetupRandomization();
+        RandomizeEnvironment();
+
+        Debug.Log("Environment reset");
+    }
+}
+```
+
+### Unity Camera Sensor Script
+```csharp
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Unity.Robotics.ROSTCPConnector;
+using RosMessageTypes.Sensor;
+using RosMessageTypes.Std;
+using System.Threading.Tasks;
+
+public class UnityCameraSensor : MonoBehaviour
+{
+    [Header("Camera Configuration")]
+    public Camera cameraComponent;
+    public int imageWidth = 640;
+    public int imageHeight = 480;
+    public float publishRate = 30.0f; // Hz
+
+    [Header("ROS Configuration")]
+    public string cameraTopic = "/camera/image_raw";
+    public string cameraInfoTopic = "/camera/camera_info";
+
+    private ROSConnection ros;
+    private RenderTexture renderTexture;
+    private Texture2D texture2D;
+    private float lastPublishTime;
+
+    void Start()
+    {
+        // Initialize camera if not assigned
+        if (cameraComponent == null)
+        {
+            cameraComponent = GetComponent<Camera>();
+        }
+
+        // Create render texture
+        renderTexture = new RenderTexture(imageWidth, imageHeight, 24);
+        cameraComponent.targetTexture = renderTexture;
+
+        // Create texture for reading
+        texture2D = new Texture2D(imageWidth, imageHeight, TextureFormat.RGB24, false);
+
+        // Initialize ROS connection
+        ros = ROSConnection.GetOrCreateInstance();
+        ros.RegisterPublisher<ImageMsg>(cameraTopic);
+        ros.RegisterPublisher<CameraInfoMsg>(cameraInfoTopic);
+
+        lastPublishTime = Time.time;
+
+        Debug.Log($"Unity camera sensor initialized with resolution {imageWidth}x{imageHeight}");
+    }
+
+    void Update()
+    {
+        // Publish images at specified rate
+        if (Time.time - lastPublishTime >= 1.0f / publishRate)
+        {
+            PublishCameraData();
+            lastPublishTime = Time.time;
+        }
+    }
+
+    void PublishCameraData()
+    {
+        if (ros == null) return;
+
+        // Read pixels from render texture
+        RenderTexture.active = renderTexture;
+        texture2D.ReadPixels(new Rect(0, 0, imageWidth, imageHeight), 0, 0);
+        texture2D.Apply();
+
+        // Get raw image data
+        byte[] imageData = texture2D.EncodeToPNG();
+
+        // Create and publish image message
+        var imageMsg = new ImageMsg();
+        imageMsg.header = new HeaderMsg();
+        imageMsg.header.stamp = new TimeStamp(ROSConnection.GetNodeHandle().GetClock().Now().Secs,
+                                             ROSConnection.GetNodeHandle().GetClock().Now().Nanos);
+        imageMsg.header.frame_id = "camera_optical_frame";
+        imageMsg.height = (uint)imageHeight;
+        imageMsg.width = (uint)imageWidth;
+        imageMsg.encoding = "rgb8";
+        imageMsg.is_bigendian = 0;
+        imageMsg.step = (uint)(imageWidth * 3); // 3 bytes per pixel for RGB
+        imageMsg.data = imageData;
+
+        ros.Publish(cameraTopic, imageMsg);
+
+        // Publish camera info
+        PublishCameraInfo();
+    }
+
+    void PublishCameraInfo()
+    {
+        var cameraInfoMsg = new CameraInfoMsg();
+        cameraInfoMsg.header = new HeaderMsg();
+        cameraInfoMsg.header.stamp = new TimeStamp(ROSConnection.GetNodeHandle().GetClock().Now().Secs,
+                                                  ROSConnection.GetNodeHandle().GetClock().Now().Nanos);
+        cameraInfoMsg.header.frame_id = "camera_optical_frame";
+        cameraInfoMsg.height = (uint)imageHeight;
+        cameraInfoMsg.width = (uint)imageWidth;
+
+        // Simple camera matrix (approximate)
+        cameraInfoMsg.K = new double[9] {
+            320, 0, 320,    // fx, 0, cx
+            0, 320, 240,    // 0, fy, cy
+            0, 0, 1         // 0, 0, 1
+        };
+
+        // No distortion
+        cameraInfoMsg.D = new double[5] { 0, 0, 0, 0, 0 };
+        cameraInfoMsg.R = new double[9] { 1, 0, 0, 0, 1, 0, 0, 0, 1 };
+        cameraInfoMsg.P = new double[12] { 320, 0, 320, 0, 0, 320, 240, 0, 0, 0, 1, 0 };
+
+        ros.Publish(cameraInfoTopic, cameraInfoMsg);
+    }
+}
+```
+
+## Practical Lab / Simulation
+
+### Lab Exercise 1: Unity Robotics Setup
+
+1. Install Unity Hub and Unity 2021.3 LTS or later
+2. Create a new 3D project
+3. Import Unity Robotics Hub package:
+   - Window → Package Manager
+   - Install "ROS TCP Connector" and "URDF Importer"
+4. Set up basic scene with a plane and simple robot model
+
+### Lab Exercise 2: Robot Model Creation
+
+1. Create a simple humanoid robot in Unity with:
+   - Torso, head, arms, and legs
+   - Appropriate joints and colliders
+   - Rigidbody components for physics simulation
+2. Add the UnityHumanoidController script to your robot
+3. Test basic movement in the Unity editor
+
+### Lab Exercise 3: ROS 2 Integration
+
+1. Install ROS 2 Humble Hawksbill on your system
+2. Set up the Unity ROS TCP Connector:
+   - Configure IP addresses for communication
+   - Test connection between Unity and ROS 2
+3. Create a simple ROS 2 node to send movement commands to Unity
+
+### Lab Exercise 4: Camera Sensor Integration
+
+1. Add the UnityCameraSensor script to a camera in your scene
+2. Configure camera parameters (resolution, frame rate)
+3. Verify that camera data is published to ROS 2 topics
+4. Test image processing using ROS 2 tools:
+   ```bash
+   ros2 run image_view image_view image:=/camera/image_raw
+   ```
+
+### Lab Exercise 5: Domain Randomization
+
+1. Implement the UnityEnvironmentManager script in your scene
+2. Add domain randomization features:
+   - Lighting variations
+   - Material changes
+   - Object placement variations
+3. Test how domain randomization affects robot performance
+4. Evaluate the impact on Sim2Real transfer
+
+### Lab Exercise 6: Complex Environment Creation
+
+1. Create a complex environment with obstacles, stairs, and varied terrain
+2. Implement navigation tasks for your humanoid robot
+3. Test robot's ability to navigate the environment
+4. Add sensors and test perception in the complex environment
+
+## Real-World Mapping
+
+### Industrial Applications
+- **Automotive**: Unity used for training autonomous vehicle perception systems
+- **Manufacturing**: Robot training in Unity environments representing factory floors
+- **Logistics**: Warehouse robot simulation with Unity for package handling
+
+### Entertainment & Gaming
+- **Robot Games**: Unity used to create robot simulation games for training
+- **VR Training**: Immersive robot operation training in Unity VR environments
+- **Simulation Games**: Complex robot simulation games for algorithm testing
+
+### Research Applications
+- **DeepMind**: Unity used for reinforcement learning research
+- **OpenAI**: Unity environments for training dexterous manipulation
+- **University Research**: Various institutions use Unity for humanoid robot research
+
+### Key Success Factors
+- **Visual Fidelity**: High-quality rendering for effective perception training
+- **Physics Accuracy**: Realistic physics simulation for reliable behavior transfer
+- **Environment Diversity**: Varied scenarios for robust algorithm development
+- **Integration Quality**: Seamless ROS 2 connectivity for real-world deployment
+
+## Summary
+
+Chapter 2 has introduced Unity as a powerful simulation environment for Physical AI and humanoid robotics. We've explored Unity's capabilities for creating visually rich, immersive virtual worlds with advanced rendering and physics simulation. The examples demonstrated how to create humanoid robot controllers, manage environments with domain randomization, and integrate Unity with ROS 2 for comprehensive robot simulation. The hands-on lab exercises provide practical experience with Unity robotics setup, sensor integration, and environment creation. This foundation enables the development of sophisticated simulation environments that can effectively prepare humanoid robots for real-world tasks.

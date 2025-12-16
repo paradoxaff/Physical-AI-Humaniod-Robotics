@@ -1,0 +1,454 @@
+openapi: 3.0.0
+info:
+  title: Physical AI & Humanoid Robotics Textbook API
+  description: API for the Physical AI & Humanoid Robotics textbook, including content management and RAG chatbot functionality
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Development server
+  - url: https://api.textbook.example.com
+    description: Production server
+
+paths:
+  /api/lessons/{lesson_id}:
+    get:
+      summary: Get lesson content
+      description: Retrieve a specific lesson by ID, including all required components
+      parameters:
+        - name: lesson_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the lesson
+      responses:
+        '200':
+          description: Lesson content retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+        '404':
+          description: Lesson not found
+        '400':
+          description: Invalid lesson ID
+
+  /api/modules:
+    get:
+      summary: List all modules
+      description: Retrieve a list of all textbook modules with their lessons
+      responses:
+        '200':
+          description: List of modules retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  modules:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Module'
+
+  /api/modules/{module_id}:
+    get:
+      summary: Get module content
+      description: Retrieve a specific module and its lessons
+      parameters:
+        - name: module_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the module
+      responses:
+        '200':
+          description: Module content retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Module'
+        '404':
+          description: Module not found
+
+  /api/rag/query:
+    post:
+      summary: RAG query endpoint
+      description: Submit a query to the RAG system for textbook content
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  description: The query text
+                  example: "Explain the ROS 2 architecture for humanoid robots"
+                query_type:
+                  type: string
+                  enum: [full_book_qa, selected_text_qa]
+                  description: Type of query to perform
+                  default: full_book_qa
+                selected_text:
+                  type: string
+                  description: Text selected for selected-text-only QA (optional)
+              required:
+                - query
+      responses:
+        '200':
+          description: Query response with relevant content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+                    description: The AI-generated response
+                  source_documents:
+                    type: array
+                    items:
+                      type: string
+                    description: List of source document IDs used
+                  query_type:
+                    type: string
+                    enum: [full_book_qa, selected_text_qa]
+                  confidence_score:
+                    type: number
+                    format: float
+                    minimum: 0
+                    maximum: 1
+                    description: Confidence score of the response
+        '400':
+          description: Invalid query parameters
+
+  /api/users/profile:
+    get:
+      summary: Get user profile
+      description: Retrieve the current user's profile and preferences
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized - user not authenticated
+
+    put:
+      summary: Update user profile
+      description: Update the current user's profile and preferences
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                background_profile:
+                  type: object
+                  description: User's technical background information
+                preferences:
+                  type: object
+                  description: User preferences including language settings
+      responses:
+        '200':
+          description: User profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid profile data
+        '401':
+          description: Unauthorized - user not authenticated
+
+  /api/users/progress:
+    get:
+      summary: Get user progress
+      description: Retrieve the user's progress across lessons and modules
+      responses:
+        '200':
+          description: User progress retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  progress:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserProgress'
+        '401':
+          description: Unauthorized - user not authenticated
+
+    post:
+      summary: Update user progress
+      description: Update the user's progress for a specific lesson
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                lesson_id:
+                  type: string
+                  description: ID of the lesson
+                status:
+                  type: string
+                  enum: [not_started, in_progress, completed]
+                  description: New status for the lesson
+                completion_percentage:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                  description: Completion percentage
+              required:
+                - lesson_id
+                - status
+      responses:
+        '200':
+          description: User progress updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProgress'
+        '400':
+          description: Invalid progress data
+        '401':
+          description: Unauthorized - user not authenticated
+
+  /api/hardware/{config_type}:
+    get:
+      summary: Get hardware configuration
+      description: Retrieve hardware configuration details for specified type
+      parameters:
+        - name: config_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [digital_twin_workstation, edge_ai_kit_jetson, robot_lab_proxy, robot_lab_miniature, robot_lab_premium]
+          description: Type of hardware configuration to retrieve
+      responses:
+        '200':
+          description: Hardware configuration retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HardwareConfiguration'
+        '404':
+          description: Hardware configuration not found
+
+components:
+  schemas:
+    Lesson:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the lesson
+        module_id:
+          type: string
+          description: ID of the parent module
+        title:
+          type: string
+          description: Title of the lesson
+        content:
+          type: string
+          description: Full content of the lesson in Markdown format
+        lesson_template_components:
+          type: object
+          description: The 8 required components of the lesson template
+          properties:
+            learning_objectives:
+              type: array
+              items:
+                type: string
+            physical_ai_concept:
+              type: string
+            system_architecture:
+              type: string
+            tools_software:
+              type: string
+            code_examples:
+              type: string
+            practical_lab:
+              type: string
+            real_world_mapping:
+              type: string
+            summary:
+              type: string
+        order:
+          type: integer
+          description: Order of the lesson within the module
+        estimated_duration_minutes:
+          type: integer
+          description: Estimated time to complete the lesson
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+      required:
+        - id
+        - module_id
+        - title
+        - content
+        - lesson_template_components
+
+    Module:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the module
+        title:
+          type: string
+          description: Title of the module
+        description:
+          type: string
+          description: Description of the module
+        version:
+          type: string
+          description: Version of the module content
+        order:
+          type: integer
+          description: Order of the module in the textbook
+        lessons:
+          type: array
+          items:
+            $ref: '#/components/schemas/Lesson'
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+      required:
+        - id
+        - title
+        - description
+        - lessons
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the user
+        email:
+          type: string
+          format: email
+          description: User's email address
+        name:
+          type: string
+          description: User's full name
+        background_profile:
+          type: object
+          description: User's technical background information
+        preferences:
+          type: object
+          description: User preferences including language settings
+        created_at:
+          type: string
+          format: date-time
+          description: Account creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+      required:
+        - id
+        - email
+        - name
+
+    UserProgress:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the progress record
+        user_id:
+          type: string
+          description: ID of the user
+        lesson_id:
+          type: string
+          description: ID of the lesson
+        status:
+          type: string
+          enum: [not_started, in_progress, completed]
+          description: Current status of the lesson
+        completion_percentage:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Completion percentage
+        last_accessed_at:
+          type: string
+          format: date-time
+          description: Last time the lesson was accessed
+        completed_at:
+          type: string
+          format: date-time
+          description: Time when lesson was completed (if applicable)
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+      required:
+        - id
+        - user_id
+        - lesson_id
+        - status
+
+    HardwareConfiguration:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the hardware config
+        name:
+          type: string
+          description: Name of the hardware configuration
+        type:
+          type: string
+          enum: [digital_twin_workstation, edge_ai_kit_jetson, robot_lab_proxy, robot_lab_miniature, robot_lab_premium]
+          description: Type of hardware configuration
+        specifications:
+          type: object
+          description: Technical specifications
+        setup_instructions:
+          type: string
+          description: Setup instructions in Markdown format
+        tradeoffs:
+          type: object
+          description: Cloud vs on-prem tradeoffs
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+      required:
+        - id
+        - name
+        - type
+        - specifications
+        - setup_instructions
+        - tradeoffs

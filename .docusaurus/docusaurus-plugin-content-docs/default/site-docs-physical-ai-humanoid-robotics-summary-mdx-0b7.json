@@ -1,0 +1,18 @@
+{
+  "id": "physical-ai-humanoid-robotics-summary",
+  "title": "Physical AI & Humanoid Robotics - Complete Textbook Summary",
+  "description": "Overview",
+  "source": "@site/docs/physical-ai-humanoid-robotics-summary.mdx",
+  "sourceDirName": ".",
+  "slug": "/physical-ai-humanoid-robotics-summary",
+  "permalink": "/docs/physical-ai-humanoid-robotics-summary",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/physical-ai-humanoid-robotics-summary.mdx",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Physical AI & Humanoid Robotics - Complete Textbook Summary",
+    "sidebar_label": "Complete Summary"
+  }
+}

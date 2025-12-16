@@ -1,0 +1,109 @@
+---
+title: Module 1 - The Robotic Nervous System (ROS 2)
+sidebar_label: Overview
+---
+
+# Module 1: The Robotic Nervous System (ROS 2)
+
+## Learning Objectives
+
+By the end of this module, you will be able to:
+- Understand the fundamental concepts of Robot Operating System 2 (ROS 2) and its role in Physical AI
+- Explain how ROS 2 serves as the "nervous system" for robotic systems
+- Implement basic ROS 2 nodes, topics, and services for robot communication
+- Create Python agents using rclpy to control robotic systems
+- Design communication patterns between different robotic components
+
+## Physical AI Concept
+
+ROS 2 represents the foundational communication infrastructure for Physical AI systems. Just as the nervous system enables coordination between different parts of a biological organism, ROS 2 enables seamless communication between sensors, actuators, controllers, and AI systems in robotic platforms. This distributed architecture allows for modularity, scalability, and real-time performance critical for embodied intelligence.
+
+## System Architecture
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Sensor Node   │    │  Controller     │    │   AI Decision   │
+│                 │◄──►│     Node        │◄──►│     Node        │
+│  • Camera       │    │  • Path Planner │    │  • Behavior     │
+│  • LIDAR        │    │  • Motion Ctrl │    │    Selector     │
+│  • IMU          │    │  • Trajectory  │    │  • Learning     │
+└─────────────────┘    │    Generator    │    │    Models       │
+                       └─────────────────┘    └─────────────────┘
+                                ▲
+                                │
+                       ┌─────────────────┐
+                       │   ROS 2         │
+                       │   Communication │
+                       │   Middleware    │
+                       │  (DDS-based)    │
+                       └─────────────────┘
+                                ▼
+                       ┌─────────────────┐
+                       │   Actuator      │
+                       │   Node          │
+                       │  • Motors       │
+                       │  • Grippers     │
+                       │  • Lights       │
+                       └─────────────────┘
+```
+
+ROS 2 uses Data Distribution Service (DDS) as its underlying communication middleware, providing:
+- **Real-time performance**: Deterministic message delivery for time-critical applications
+- **Quality of Service (QoS)**: Configurable reliability and performance settings
+- **Language independence**: Support for C++, Python, Java, and other languages
+- **Distributed architecture**: Nodes can run on different machines or processes
+
+## Tools & Software
+
+This module uses the following tools and software:
+- **ROS 2 Humble Hawksbill** (or latest LTS version) - The core robotics framework
+- **rclpy** - Python client library for ROS 2
+- **RViz2** - 3D visualization tool for robotics
+- **Gazebo** - Physics-based simulation environment
+- **Colcon** - ROS 2 build system
+- **Python 3.8+** - For implementing ROS 2 nodes
+
+## Code / Configuration Examples
+
+### Basic ROS 2 Node Structure
+```python
+import rclpy
+from rclpy.node import Node
+
+class RobotNode(Node):
+    def __init__(self):
+        super().__init__('robot_node')
+        self.get_logger().info('Robot node initialized')
+
+    def main():
+        rclpy.init()
+        node = RobotNode()
+        rclpy.spin(node)
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+## Practical Lab / Simulation
+
+In this module's practical lab, you will:
+1. Set up a basic ROS 2 workspace with custom message types
+2. Create sensor and actuator nodes that communicate through topics
+3. Implement a controller node that processes sensor data and commands actuators
+4. Use RViz2 to visualize the robot's state and sensor data
+5. Deploy your nodes to a simulated robot in Gazebo
+
+## Real-World Mapping
+
+ROS 2 is used in numerous real-world applications:
+- **Autonomous vehicles**: Waymo, Tesla, and other companies use ROS-based systems
+- **Industrial robotics**: ABB, KUKA, and Universal Robots integrate ROS compatibility
+- **Research robotics**: NASA's Mars rovers use ROS-inspired architectures
+- **Service robotics**: Companies like Boston Dynamics and Amazon Robotics utilize similar concepts
+- **Humanoid robotics**: PAL Robotics, SoftBank Robotics, and others build on ROS
+
+## Summary
+
+Module 1 introduces the fundamental communication infrastructure for Physical AI systems through ROS 2. Understanding how to design and implement distributed robotic systems using ROS 2's node-topic-service architecture is essential for building complex, coordinated robotic behaviors. This module establishes the foundation for more advanced topics in Physical AI, including perception, planning, and control systems.

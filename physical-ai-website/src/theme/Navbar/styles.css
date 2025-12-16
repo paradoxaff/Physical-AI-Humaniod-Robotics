@@ -1,0 +1,29 @@
+.header-ai-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-right: 1rem;
+}
+
+.header-ai-button {
+  background: linear-gradient(135deg, var(--ifm-color-primary), var(--ifm-color-purple));
+  border: none;
+  border-radius: 0.5rem;
+  color: white;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header-ai-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 247, 255, 0.3);
+}
+
+.header-ai-button:active {
+  transform: translateY(0);
+}

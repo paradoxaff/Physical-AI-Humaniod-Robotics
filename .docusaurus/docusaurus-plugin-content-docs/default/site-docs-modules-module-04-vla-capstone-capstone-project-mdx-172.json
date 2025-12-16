@@ -1,0 +1,27 @@
+{
+  "id": "modules/module-04-vla-capstone/capstone-project",
+  "title": "Chapter 3 - Capstone Project",
+  "description": "Learning Objectives",
+  "source": "@site/docs/modules/module-04-vla-capstone/capstone-project.mdx",
+  "sourceDirName": "modules/module-04-vla-capstone",
+  "slug": "/modules/module-04-vla-capstone/capstone-project",
+  "permalink": "/docs/modules/module-04-vla-capstone/capstone-project",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/modules/module-04-vla-capstone/capstone-project.mdx",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Chapter 3 - Capstone Project",
+    "sidebar_label": "Capstone Project"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Overview",
+    "permalink": "/docs/modules/module-04-vla-capstone/"
+  },
+  "next": {
+    "title": "Conversational Robotics",
+    "permalink": "/docs/modules/module-04-vla-capstone/conversational-robotics"
+  }
+}
